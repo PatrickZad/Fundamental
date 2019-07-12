@@ -4,10 +4,12 @@
 
 #ifndef CPPIMPL_SORT_PATRICK_H
 #define CPPIMPL_SORT_PATRICK_H
+
+#include <vector>
 namespace patrick{
     template <class T>
-    void insertionSort(T& sequence, int lengh, bool ascend=true);
+    void insertionSort(std::vector<T>& sequence, int lengh, bool ascend=true);
     template <class T>
-    void mergeSort(T& sequence,int startIndex,int endIndex, bool ascend=true);
+    void mergeSort(std::vector<T>& sequence,int startIndex,int endIndex, bool ascend=true);
 }
 #endif //CPPIMPL_SORT_PATRICK_H
