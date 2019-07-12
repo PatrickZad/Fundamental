@@ -26,11 +26,16 @@ void patrick::insertionSort(T& sequence, int length, bool ascend){
     }
 }
 template <class T>
-inline void merge(T& sequence, int start0, int end0, int start1, int end1){
-
+inline void merge(T& sequence, int start0, int end0, int start1, int end1, bool ascend){
+    auto temp=sequence[start0];
+    if(ascend){
+        for (int i=start0,j=start1;i<=end0 && j<= end1;i++,j++){
+            //TODO
+        }
+    }
 }
 template <class T>
-void patrick::mergeSort(T& sequence, int startIndex, int endIndex){
-
+void patrick::mergeSort(T& sequence, int startIndex, int endIndex, bool ascend){
+    //TODO
 }
 
