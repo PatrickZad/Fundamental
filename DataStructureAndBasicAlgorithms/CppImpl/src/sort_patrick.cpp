@@ -27,7 +27,8 @@ void patrick::insertionSort(std::vector<T>& sequence, int length, bool ascend){
     }
 }
 template <class T>
-inline void merge(const std::vector<T>& sequence, const std::vector<T>& result,int start, int end0, int end1, bool ascend){
+inline void merge(std::vector<T>& sequence, int start, int end0, int end1, bool ascend){
+    std::vector<T> result=new std::vector<T>(end1-start+1);
     if(ascend){
         int i=start,j=start+1;
         int k=start;
@@ -50,7 +51,7 @@ inline void merge(const std::vector<T>& sequence, const std::vector<T>& result,i
                     j++;
                     k++;
                 } else{
-                    result[k]sequence[i];
+                    result[k]=sequence[i];
                     i++;
                     k++;
                 }
@@ -66,6 +67,9 @@ inline void merge(const std::vector<T>& sequence, const std::vector<T>& result,i
             j++;
             k++;
         }
+        for (int i = 0; i < result.size(); i++) {
+            sequence[start+i]=result[i];
+        }
     }
 }
 template <class T>
@@ -74,6 +78,8 @@ void patrick::mergeSort(std::vector<T>& sequence, int startIndex, int endIndex, 
         return;
     }
     int medium=(startIndex+endIndex)/2;
-
+    patrick::mergeSort(sequence,startIndex,medium,ascend);
+    patrick::mergeSort(sequence,medium+1,endIndex,ascend);
+    merge(sequence,startIndex,medium,endIndex,ascend);
 }
 
