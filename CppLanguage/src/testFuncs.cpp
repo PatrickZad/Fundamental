@@ -15,11 +15,15 @@ void test::referenceParam(int i, int& j){
 }
 void test::namedTypeTrans(){
     int i=2;
+    const int k=6;
     const int* ip=&i;
-    int& rp=i;
+    const int& rp=i;
     i++;
     auto ncip= const_cast<int*>(ip);
     (*ncip)++;
-    auto crp= const_cast<const int&>(rp);
+    auto crp= const_cast<int&>(rp);
     crp++;
+    auto ck= const_cast<int>(k);
+    ck++;
+    //rp++;
 }
