@@ -23,9 +23,19 @@ T patrick::maxSubArraySumImproved(const std::vector <T> &array) {
 }
 
 template<class T>
-T patrick:: maxSubArraySumLinear(const std::vector <T> &array) {
-    T sum;
-
+T patrick:: maxSubArraySumLinear(const std::vector <T> &array, T tZero) {
+    T sum=tZero;
+    std::vector<T> subPostfixSum = new std::vector<T>{array.size()};
+    subPostfixSum[0]=array[0]>tZero ? array[0] : tZero;
+    for (int i = 1; i <array.size() ; i++) {
+        subPostfixSum[i] = (subPostfixSum[i-1]+array[i])>tZero ?
+                (subPostfixSum[i-1]+array[i]) : tZero ;
+    }
+    for (int j = 0; j < subPostfixSum.size(); ++j) {
+        if (subPostfixSum[j]>sum){
+            sum=subPostfixSum[j];
+        }
+    }
     return sum;
 }
 

@@ -10,7 +10,7 @@ namespace patrick{
     template <class T>
     T maxSubArraySumImproved(const std::vector<T>& array);
     template <class T>
-    T maxSubArraySumLinear(const std::vector<T>& array);
+    T maxSubArraySumLinear(const std::vector<T>& array,T tZero);
 
 }
 #endif //CPPIMPL_OTHERS_PATRICK_H
