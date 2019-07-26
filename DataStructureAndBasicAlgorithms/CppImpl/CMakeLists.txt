@@ -8,8 +8,9 @@ include_directories(src/include)
 add_executable(test
         src/include/others_patrick.h
         src/include/sort_patrick.h
+        src/include/basic_data_structure.h
         src/others_patrick.cpp
         src/sort_patrick.cpp
+        src/basic_data_structure.cpp
         src/test.cpp
-        CMakeLists.txt
-        README.md)
+        )

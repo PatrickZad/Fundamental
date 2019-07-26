@@ -11,5 +11,9 @@ namespace patrick{
     void insertionSort(std::vector<T>& sequence, int lengh, bool ascend=true);
     template <class T>
     void mergeSort(std::vector<T>& sequence,int startIndex,int endIndex, bool ascend=true);
+    template <class C, class T>
+    void quickSort(C array);
+    template <class C, class T>
+    void randQuickSort(C array);
 }
 #endif //CPPIMPL_SORT_PATRICK_H

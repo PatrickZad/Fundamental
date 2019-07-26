@@ -1,0 +1,8 @@
+//
+// Created by pengcheng.zhang on 2019-07-24.
+//
+
+#ifndef CPPIMPL_BASIC_DATA_STRUCTURE_H
+#define CPPIMPL_BASIC_DATA_STRUCTURE_H
+
+#endif //CPPIMPL_BASIC_DATA_STRUCTURE_H
