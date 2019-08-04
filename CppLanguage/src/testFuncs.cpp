@@ -22,8 +22,22 @@ void test::namedTypeTrans(){
     auto ncip= const_cast<int*>(ip);
     (*ncip)++;
     auto crp= const_cast<int&>(rp);
-    crp++;
-    auto ck= const_cast<int>(k);
-    ck++;
+    //crp++;
+    //auto ck= const_cast<int>(k);
+    //ck++;
     //rp++;
 }
+void test::nullReference() {
+    test::MyClass array[6];
+    array[0]=test::MyClass();
+    array[1]=test::MyClass();
+    /*
+    array[0]=NULL;
+    if (array[0]==NULL){
+        std::cout<<"done";
+    }*/
+}
+test::MyClass::MyClass(){
+    this.
+}
+

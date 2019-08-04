@@ -5,8 +5,9 @@
 int main(){
     int k=6;
     int& rk=k;
-    test::referenceParam(rk,k);
-    test::lambdaExpr();
-    test::namedTypeTrans();
+    //test::referenceParam(rk,k);
+    //test::lambdaExpr();
+    //test::namedTypeTrans();
+    test::nullReference();
     return 0;
 }
