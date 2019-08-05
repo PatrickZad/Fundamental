@@ -8,7 +8,6 @@ namespace test{
     void lambdaExpr();
     void referenceParam(int , int& );
     void namedTypeTrans();
-    void nullReference();
     class MyClass{
     public:
         MyClass();
@@ -16,5 +15,7 @@ namespace test{
     private:
         int& num;
     };
+    void refAndptr();
+    void deletearray();
 }
 #endif //PRACTICE_TESTFUNCS_H

@@ -13,32 +13,31 @@ namespace patrick{
     class ExtendableArray{
     public:
         ExtendableArray();
-        unsigned int size();
-        bool add(T&);
-        bool insert(unsigned int ,T&);
-        T& get(unsigned int);
-        bool remove(unsigned int);
-        bool clear();
-        T& operator[](unsigned int);
         ~ExtendableArray();
+        unsigned int size();
+        bool append(T&);
+        bool insert(unsigned int ,T&);
+        T* remove(unsigned int);
+        void clear();
+        T* operator[](unsigned int);
     private:
         static const unsigned int N=64;
-        unsigned int repoSize=N;
-        unsigned int length=0;
-        T* repo=new T[N];
+        unsigned int repoSize;
+        unsigned int length;
+        T** repo;
     };
     template <class T>
     class ArrayStack{
     public:
         ArrayStack();
-        bool push(T&);
-        T& pop();
+        void push(T&);
+        T* pop();
         unsigned int size();
-        ~ArrayStack();
+        //~ArrayStack();
     private:
-        const static unsigned int N = 255;
-        T* stack=new T[N];
-        unsigned int length=0;
+        //const static unsigned int N = 255;
+        ExtendableArray<T*> stack;
+        unsigned int length;
     };
     template <class T>
     class ArrayQueue{
@@ -48,30 +47,30 @@ namespace patrick{
     public:
         ArrayQueue();
         bool enqueue(T&);
-        T& dequeue();
+        T* dequeue();
         unsigned int size();
         ~ArrayQueue();
     private:
         const static unsigned int N = 255;
-        T* queue=new T[N];
-        unsigned int length=0;
-        unsigned int front=0;
-        unsigned int next=0;
+        T** queue;
+        unsigned int length;
+        unsigned int front;
+        unsigned int next;
     };
     template <class T>
     class ArrayList{
     public:
         ArrayList();
-        T& get(unsigned int);
         bool insert(unsigned int, T&);
-        bool remove(unsigned int);
+        T* remove(unsigned int);
         unsigned int size();
-        T& operator[](unsigned int);
-        ~ArrayList();
+        T* operator[](unsigned int);
+        bool append(T&);
+        //~ArrayList();
     private:
-        const static unsigned int N = 255;
-        T* list=new T[N];
-        unsigned int length=0;
+        //const static unsigned int N = 255;
+        ExtendableArray<T*> list;
+        unsigned int length;
     };
 
     template <class T>
@@ -85,14 +84,13 @@ namespace patrick{
     class LinkedList{
     public:
         LinkedList();
-        T& get(unsigned int);
         bool insert(unsigned int, T&);
         bool remove(unsigned int);
         unsigned int size();
-        T& operator[](unsigned int);
+        T* operator[](unsigned int);
     private:
-        unsigned int length=0;
-        LinkedNode<T>& head;
+        unsigned int length;
+        LinkedNode<T>* head;
     };
     template <class T>
     struct BinaryNode{

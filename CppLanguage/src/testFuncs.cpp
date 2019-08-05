@@ -27,17 +27,23 @@ void test::namedTypeTrans(){
     //ck++;
     //rp++;
 }
-void test::nullReference() {
-    test::MyClass array[6];
-    array[0]=test::MyClass();
-    array[1]=test::MyClass();
-    /*
-    array[0]=NULL;
-    if (array[0]==NULL){
+
+void test::refAndptr() {
+    int num=6;
+    int& rnum=num;
+    int* pnum=&num;
+    int* prnum=&rnum;
+    //int&* pr=&num;
+    if (pnum==prnum){
         std::cout<<"done";
-    }*/
+    }
 }
-test::MyClass::MyClass(){
-    this.
+void test::deletearray() {
+    int** array0=new int*[8];
+    int** array1=array0;
+    delete [] array1;
+    int num=6;
+    array0[0]=&num;
+    array1[0]=&num;
 }
 

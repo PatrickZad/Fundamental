@@ -8,6 +8,7 @@ int main(){
     //test::referenceParam(rk,k);
     //test::lambdaExpr();
     //test::namedTypeTrans();
-    test::nullReference();
+    //test::refAndptr();
+    test::deletearray();
     return 0;
 }
