@@ -7,13 +7,21 @@
 
 #include <vector>
 namespace patrick{
-    template <class T>
-    void insertionSort(std::vector<T>& sequence, int lengh, bool ascend=true);
-    template <class T>
-    void mergeSort(std::vector<T>& sequence,int startIndex,int endIndex, bool ascend=true);
-    template <class C, class T>
-    void quickSort(C array);
-    template <class C, class T>
-    void randQuickSort(C array);
+    template <class C>
+    void insertionSort(C& sequence, int lengh, bool ascend=true);
+    template <class C>
+    void selectionSort(C& collection);
+    template <class C>
+    void bubbleSort(C& collection);
+    template <class C>
+    void mergeSort(C& sequence,int startIndex,int endIndex, bool ascend=true);
+    template <class C>
+    void quickSort(C& array,int start,int end);
+    template <class C>
+    void randQuickSort(C& array);
+    template <class C>
+    void heapSort(C& collection);
+    template <class C>
+    void countingSort(C& collection);
 }
 #endif //CPPIMPL_SORT_PATRICK_H
