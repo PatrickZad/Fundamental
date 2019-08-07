@@ -1,7 +1,7 @@
 //
 // Created by pengcheng.zhang on 2019-07-24.
 //
-#include "basic_data_structure.h"
+#include "linear_structure.h"
 using namespace patrick;
 template <class T>
 ExtendableArray<T>::ExtendableArray() {

@@ -2,8 +2,8 @@
 // Created by pengcheng.zhang on 2019-07-24.
 //
 
-#ifndef CPPIMPL_BASIC_DATA_STRUCTURE_H
-#define CPPIMPL_BASIC_DATA_STRUCTURE_H
+#ifndef CPPIMPL_LINEAR_STRUCTURE_H
+#define CPPIMPL_LINEAR_STRUCTURE_H
 
 
 namespace patrick{
@@ -109,4 +109,4 @@ namespace patrick{
     };
 
 }
-#endif //CPPIMPL_BASIC_DATA_STRUCTURE_H
+#endif //CPPIMPL_LINEAR_STRUCTURE_H
