@@ -19,16 +19,24 @@ namespace patrick{
         virtual T* get(unsigned int index)=0;
         virtual bool insert(T& data)=0;
         BinaryNode<T>* head;
-        template < class F>
-        void preOrderTraversal(F& visitFunc);
-        template < class F>
-        void inOrderTraversal(F& visitFunc);
-        template < class F>
-        void postOrderTraversal(F& visitFunc);
-        template < class F>
-        void layerTraversal(F& visitFunc);
+        static const char PREORDER_THREADED=0;
+        static const char INORDER_THREADED=1;
+        static const char POSTORDER_THREADED=2;
+        void threaded(char order);
     private:
         unsigned int length;
+    };
+    template < class T,class F>
+    void preOrderTraversal(BinaryNode<T>& root,F& visitFunc);
+    template < class T, class F>
+    void inOrderTraversal(BinaryNode<T>& root,F& visitFunc);
+    template < class T, class F>
+    void postOrderTraversal(BinaryNode<T>& root,F& visitFunc);
+    template < class T, class F>
+    void layerTraversal(BinaryNode<T>& root, F& visitFunc);
+    template <class T>
+    class BinarySearchTree:BinaryTree<T>{
+
     };
 
 }
