@@ -7,8 +7,10 @@
 
 
 namespace patrick{
-
-
+//Only element pointer will be saved in these collections,
+//for which only element reference needs to be conveyed
+//and template type should be specified as the type of elements itself,
+//not its reference.
     template <class T>
     class ExtendableArray{
     public:
@@ -92,21 +94,5 @@ namespace patrick{
         unsigned int length;
         LinkedNode<T>* head;
     };
-    template <class T>
-    struct BinaryNode{
-        T* data;
-        BinaryNode<T>* left;
-        BinaryNode<T>* right;
-    };
-    template <class T>
-    class BinaryTree{
-    public:
-        BinaryTree();
-        BinaryNode<T>& parent(BinaryNode<T>&);
-        unsigned int size();
-    private:
-        BinaryNode<T>* root;
-    };
-
 }
 #endif //CPPIMPL_LINEAR_STRUCTURE_H
