@@ -18,6 +18,7 @@ namespace patrick{
         unsigned int size();
         virtual T* get(unsigned int index)=0;
         virtual bool insert(T& data)=0;
+        virtual T* remove(T& data)=0;
         BinaryNode<T>* head;
         static const char PREORDER_THREADED=0;
         static const char INORDER_THREADED=1;
