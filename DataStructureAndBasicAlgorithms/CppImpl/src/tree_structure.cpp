@@ -127,6 +127,13 @@ void layerTraversal(BinaryTree<T>& tree, F& visitFunc){
     }
 }
 template <class T>
+void BinaryTree<T>::threaded(char order) {
+    switch (order){
+        case PREORDER_THREADED:
+            break;
+    }
+}
+template <class T>
 T* BinarySearchTree<T>::get(unsigned int index) {
     //TODO
 }
