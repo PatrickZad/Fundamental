@@ -128,8 +128,30 @@ void layerTraversal(BinaryTree<K,T>& tree, F& visitFunc){
 }
 template < class K, class T>
 void BinaryTree<K,T>::threaded(char order) {
+    class ThreadedFunc{
+    private:
+        BinaryNode<K,T>* last = nullptr;
+    public:
+        void operator()(BinaryNode<K,T>& node){
+            if(node.left == nullptr){
+                node.left=last;
+            }
+            if(last != nullptr && last->right== nullptr){
+                last->right=&node;
+            }
+            last=&node;
+        }
+    };
+    ThreadedFunc func=ThreadedFunc{};
     switch (order){
         case PREORDER_THREADED:
+            preOrderTraversalStacking(*this,func);
+            break;
+        case INORDER_THREADED:
+            inOrderTraversalStacking(*this,func);
+            break;
+        case POSTORDER_THREADED:
+            postOrderTraversalStacking(*this,func);
             break;
     }
 }
