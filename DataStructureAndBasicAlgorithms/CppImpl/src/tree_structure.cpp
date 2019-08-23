@@ -5,25 +5,25 @@
 #include "linear_structure.h"
 using namespace patrick;
 
-template <class T>
-BinaryTree<T>::BinaryTree() {
+template < class K, class T>
+BinaryTree<K,T>::BinaryTree() {
     this->length=0;
 }
-template <class T>
-BinaryTree<T>::BinaryTree(T *data) {
-    this->root=BinaryNode<T>{data, nullptr, nullptr};
+template < class K, class T>
+BinaryTree<K,T>::BinaryTree(T *data) {
+    this->root=BinaryNode<K,T>{data, nullptr, nullptr};
     this->length=1;
 }
-template <class T>
-unsigned int BinaryTree<T>::size() {
+template < class K, class T>
+unsigned int BinaryTree<K,T>::size() {
     return this->length;
 }
-template <class T>
-BinaryNode<T>* BinaryTree<T>::getRoot() {
+template < class K, class T>
+BinaryNode<K,T>* BinaryTree<K,T>::getRoot() {
     return &(this->root);
 }
-template <class T, class F>
-void preOrderTraversal(BinaryNode<T>& root,F& visitFunc){
+template < class K, class T, class F>
+void preOrderTraversal(BinaryNode<K,T>& root,F& visitFunc){
     visitFunc(root);
     if(root.left!= nullptr){
         preOrderTraversal(*(root.left),visitFunc);
@@ -32,10 +32,10 @@ void preOrderTraversal(BinaryNode<T>& root,F& visitFunc){
         preOrderTraversal(*(root.right),visitFunc);
     }
 }
-template <class T,class F>
-void preOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
-    BinaryNode<T>* ptr=&(tree.getRoot());
-    ArrayStack<BinaryNode<T>> stack=ArrayStack<BinaryNode<T>>{};
+template < class K, class T,class F>
+void preOrderTraversalStacking(BinaryTree<K,T>& tree,F& visitFunc){
+    BinaryNode<K,T>* ptr=&(tree.getRoot());
+    ArrayStack<BinaryNode<K,T>> stack=ArrayStack<BinaryNode<K,T>>{};
     while (ptr!= nullptr || stack.size()>0){
         if(ptr!= nullptr){
             visitFunc(*ptr);
@@ -46,8 +46,8 @@ void preOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
         }
     }
 }
-template <class T, class F>
-void inOrderTraversal(BinaryNode<T>& root,F& visitFunc){
+template < class K, class T, class F>
+void inOrderTraversal(BinaryNode<K,T>& root,F& visitFunc){
     if(root.left!= nullptr){
         preOrderTraversal(*(root.left),visitFunc);
     }
@@ -56,10 +56,10 @@ void inOrderTraversal(BinaryNode<T>& root,F& visitFunc){
         preOrderTraversal(*(root.right),visitFunc);
     }
 }
-template <class T,class F>
-void inOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
-    BinaryNode<T>* ptr=&(tree.getRoot());
-    ArrayStack<BinaryNode<T>> stack=ArrayStack<BinaryNode<T>>{};
+template < class K, class T,class F>
+void inOrderTraversalStacking(BinaryTree<K,T>& tree,F& visitFunc){
+    BinaryNode<K,T>* ptr=&(tree.getRoot());
+    ArrayStack<BinaryNode<K,T>> stack=ArrayStack<BinaryNode<K,T>>{};
     while (ptr!= nullptr || stack.size()>0){
         if(ptr!= nullptr){
             stack.push(*ptr);
@@ -71,8 +71,8 @@ void inOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
         }
     }
 }
-template <class T, class F>
-void postOrderTraversal(BinaryNode<T>& root,F& visitFunc){
+template < class K, class T, class F>
+void postOrderTraversal(BinaryNode<K,T>& root,F& visitFunc){
     if(root.left!= nullptr){
         preOrderTraversal(*(root.left),visitFunc);
     }
@@ -81,11 +81,11 @@ void postOrderTraversal(BinaryNode<T>& root,F& visitFunc){
     }
     visitFunc(root);
 }
-template <class T,class F>
-void postOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
+template < class K, class T,class F>
+void postOrderTraversalStacking(BinaryTree<K,T>& tree,F& visitFunc){
     //从左子树返回pop和从右子树返回pop做不同处理
-    BinaryNode<T>* ptr=&(tree.getRoot());
-    ArrayStack<BinaryNode<T>> stack=ArrayStack<BinaryNode<T>>{};
+    BinaryNode<K,T>* ptr=&(tree.getRoot());
+    ArrayStack<BinaryNode<K,T>> stack=ArrayStack<BinaryNode<K,T>>{};
     while (ptr!= nullptr || stack.size()>0){
         if(ptr!= nullptr){
             stack.push(*ptr);
@@ -94,7 +94,7 @@ void postOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
             ptr=stack.pop();
             if(ptr->right== nullptr){
                 visitFunc(*ptr);
-                BinaryNode<T>* parent=stack.pop();
+                BinaryNode<K,T>* parent=stack.pop();
                 while (parent->right==ptr){//从右结点返回
                     visitFunc(parent);
                     ptr=parent;
@@ -109,10 +109,10 @@ void postOrderTraversalStacking(BinaryTree<T>& tree,F& visitFunc){
         }
     }
 }
-template <class T, class F>
-void layerTraversal(BinaryTree<T>& tree, F& visitFunc){
-    BinaryNode<T>& node=tree.getRoot();
-    ArrayQueue<BinaryNode<T>> queue=ArrayQueue<BinaryNode<T>>{};
+template < class K, class T, class F>
+void layerTraversal(BinaryTree<K,T>& tree, F& visitFunc){
+    BinaryNode<K,T>& node=tree.getRoot();
+    ArrayQueue<BinaryNode<K,T>> queue=ArrayQueue<BinaryNode<K,T>>{};
     queue.enqueue(node);
     while ((node.left!= nullptr && node.right!= nullptr)
         || queue.size()>0){
@@ -126,34 +126,34 @@ void layerTraversal(BinaryTree<T>& tree, F& visitFunc){
         }
     }
 }
-template <class T>
-void BinaryTree<T>::threaded(char order) {
+template < class K, class T>
+void BinaryTree<K,T>::threaded(char order) {
     switch (order){
         case PREORDER_THREADED:
             break;
     }
 }
-template <class T>
-T* BinarySearchTree<T>::get(unsigned int index) {
+template < class K, class T>
+T* BinarySearchTree<K,T>::get(K* key) {
     //TODO
 }
-template <class T>
-bool BinarySearchTree<T>::insert(T &data) {
+template < class K, class T>
+bool BinarySearchTree<K,T>::insert(T &data) {
     //TODO
 }
-template <class T>
-T* BinarySearchTree<T>::remove(T &data) {
+template < class K, class T>
+T* BinarySearchTree<K,T>::remove(T &data) {
     //TODO
 }
-template <class T>
-T* BalancedBinarySearchTree<T>::get(unsigned int index) {
+template < class K, class T>
+T* BalancedBinarySearchTree<K,T>::get(K* key) {
     //TODO
 }
-template <class T>
-bool BalancedBinarySearchTree<T>::insert(T &data) {
+template < class K, class T>
+bool BalancedBinarySearchTree<K,T>::insert(T &data) {
     //TODO
 }
-template <class T>
-T* BalancedBinarySearchTree<T>::remove(T &data) {
+template < class K, class T>
+T* BalancedBinarySearchTree<K,T>::remove(T &data) {
     //TODO
 }
