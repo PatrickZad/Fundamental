@@ -13,6 +13,7 @@ namespace patrick{
 //not its reference.
     template <class T>
     class ExtendableArray{
+        //TODO reconsider about storing pointer or value
     public:
         ExtendableArray();
         ~ExtendableArray();
