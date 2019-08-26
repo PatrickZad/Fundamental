@@ -1,51 +1,76 @@
 //
 // Created by pengcheng.zhang on 2019-07-24.
 //
+#include <utility>
 #include "linear_structure.h"
 using namespace patrick;
+/*
+ * ExtendableArray
+ * */
 template <class T>
 ExtendableArray<T>::ExtendableArray() {
     this->length=0;
     this->repoSize=this->N;
     this->repo=new T[N];
 }
+
+template <class T>
+ExtendableArray<T>::ExtendableArray(const ExtendableArray& array) {
+    this->length=array.length;
+    this->repoSize=array.repoSize;
+    this->repo=new T[array.repoSize];
+    for (unsigned int i=0;i<array.length;i++){
+        *this[i]=array[i];
+    }
+}
+
+template <class T>
+ExtendableArray<T>::ExtendableArray(ExtendableArray<T> &&array) {
+    this->length=array.length;
+    this->repoSize=array.repoSize;
+    this->repo=array.repo;
+    array.repo= nullptr;
+    array.length=0;
+    array.repoSize=0;
+}
+
 template <class T>
 ExtendableArray<T>::~ExtendableArray() {
     delete[] this->repo;
 }
+
 template <class T>
 unsigned int ExtendableArray<T>::size() {
     return this->length;
 }
+
 template <class T>
-bool ExtendableArray<T>::append(T & element) {
+void ExtendableArray<T>::append(T & element) {
     if(length==repoSize){
-        T** previousRepo=this->repo;
-        this->repo=new T*[2*this->repoSize];
+        T* previousRepo=this->repo;
+        this->repo=new T[2*this->repoSize];
         for(unsigned int i=0;i<length;i++){
             repo[i]=previousRepo[i];
         }
-        this->repo[length]=&element;
+        this->repo[length]=element;
         length+=1;
         delete [] previousRepo;
-        return true;
     } else
         if(length<repoSize){
-        this->repo[length]=&element;
+        this->repo[length]=element;
         length+=1;
-        return true;
     }
-    return false;
 }
+
 template <class T>
 bool ExtendableArray<T>::insert(unsigned int index,  T & element) {
     if (length==repoSize){
-        T** previousRepo=this->repo;
-        this->repo=new T*[2*this->repoSize];
+        T* previousRepo=this->repo;
+        this->repo=new T[2*this->repoSize];
         for (unsigned int i =0;i<index;i++){
             repo[i]=previousRepo[i];
         }
-        repo[index]=&element;
+        repo[index]=element;
         for (unsigned int i=index;i<length;i++){
             repo[i+1]=previousRepo[i];
         }
@@ -57,86 +82,151 @@ bool ExtendableArray<T>::insert(unsigned int index,  T & element) {
         for (unsigned int i=length-1;i>=index;i--){
             repo[i+1]=repo[i];
         }
-        repo[index]=&element;
+        repo[index]=element;
         return true;
     }
-    return false;
+    throw OutofIndexException{};
 }
+
 template <class T>
-T* ExtendableArray<T>::remove(unsigned int index) {
+T ExtendableArray<T>::remove(unsigned int index) {
     if(index<length){
-        T* result=this->repo[index];
+        T result=this->repo[index];
         for (unsigned int i=index;i<length-1;i++){
             this->repo[i]=this->repo[i+1];
         }
-        this->repo[length-1]= nullptr;
+        length--;
         return result;
+    } else{
+        throw OutofIndexException{};
     }
-    return nullptr;
 }
+
 template <class T>
 void ExtendableArray<T>::clear() {
     delete [] this->repo;
-    this->repo=new T*[this->N];
+    this->repo=new T[this->N];
+    this->length=0;
+    this->repoSize=this->N;
 }
 template <class T>
 T* ExtendableArray<T>::operator[](unsigned int index){
     if(index<length){
         return this->repo[index];
     } else{
-        return nullptr;
+        throw OutofIndexException{};
     }
 }
+
+template <class T>
+ExtendableArray<T>& ExtendableArray<T>::operator=(const ExtendableArray<T> &array) {
+    this->length=array.length;
+    this->repoSize=array.repoSize;
+    this->repo=new T[array.repoSize];
+    for (unsigned int i=0;i<array.length;i++){
+        *this[i]=array[i];
+    }
+    return *this;
+}
+
+template <class T>
+ExtendableArray<T>& ExtendableArray<T>::operator=(ExtendableArray<T> &&array) {
+    this->length=array.length;
+    this->repoSize=array.repoSize;
+    this->repo=array.repo;
+    array.repo= nullptr;
+    array.length=0;
+    array.repoSize=0;
+    return *this;
+}
+
+/*
+ * ArrayStack
+ * */
 template <class T>
 ArrayStack<T>::ArrayStack() {
-    this->stack=ExtendableArray<T*>();
+    this->stack=ExtendableArray<T>{};
     this->length=0;
 }
+
+template <class T>
+ArrayStack<T>::ArrayStack(patrick::ArrayStack<T> &&stack) {
+    this->length=stack.length;
+    this->stack=ExtendableArray<T>{stack};
+}
+
 template <class T>
 void ArrayStack<T>::push(T & element) {
     this->stack.append(element);
     length+=1;
 }
+
 template <class T>
-T* ArrayStack<T>::pop(){
+T ArrayStack<T>::pop(){
     if(this->length==0){
-        return nullptr;
+        throw OutofIndexException{};
     } else{
         this->length-=1;
-        return this->stack[length-1];
+        return this->stack.remove(length);
     }
 }
+
 template <class T>
 unsigned int ArrayStack<T>::size() {
     return this->length;
 }
+
+/*
+ * ArrayQueue
+ * */
 template <class T>
 ArrayQueue<T>::ArrayQueue() {
     this->length=0;
     this->front=0;
     this->next=0;
-    this->queue=new T*[this->N];
+    this->queue=new T[this->N];
 }
+
+template <class T>
+ArrayQueue<T>::ArrayQueue(const ArrayQueue& queue){
+    //TODO
+}
+
+template <class T>
+ArrayQueue<T>::ArrayQueue(ArrayQueue&& queue){
+    //TODO
+}
+
+template <class T>
+ArrayQueue<T>& ArrayQueue<T>::operator=(const ArrayQueue& queue){
+    //TODO
+}
+
+template <class T>
+ArrayQueue<T>& ArrayQueue<T>::operator=(ArrayQueue&& queue){
+    //TODO
+}
+
 template <class T>
 ArrayQueue<T>::~ArrayQueue() {
     delete[] this->queue;
 }
+
 template <class T>
-bool ArrayQueue<T>::enqueue(T & element) {
+void ArrayQueue<T>::enqueue(T & element) {
     if(front==next && length==0){
-        return false;
+        throw StorageOverflow{};
     }
-    queue[next]=&element;
+    queue[next]=element;
     next=(next+1)%N;
     length+=1;
-    return true;
 }
 template <class T>
-T* ArrayQueue<T>::dequeue() {
+T ArrayQueue<T>::dequeue() {
     if(length==0){
-        return nullptr;
+        throw NullContainer{};
     }
-    T* result=queue[front];
+    T result=queue[front];
     length-=1;
     front=(front+1)%N;
     return result;
@@ -145,6 +235,10 @@ template <class T>
 unsigned int ArrayQueue<T>::size() {
     return length;
 }
+
+/*
+ * ArrayList
+ * */
 template <class T>
 ArrayList<T>::ArrayList() {
     this->list=ExtendableArray<T*>();
