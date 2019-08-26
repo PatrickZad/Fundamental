@@ -60,9 +60,8 @@ namespace patrick{
         void enqueue(T&);
         T dequeue();
         unsigned int size();
-
     private:
-        const static unsigned int N = 255;
+        const static unsigned int N = 256;
         T* queue;
         unsigned int length;
         unsigned int front;

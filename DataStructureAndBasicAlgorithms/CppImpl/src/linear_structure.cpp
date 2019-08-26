@@ -20,7 +20,7 @@ ExtendableArray<T>::ExtendableArray(const ExtendableArray& array) {
     this->repoSize=array.repoSize;
     this->repo=new T[array.repoSize];
     for (unsigned int i=0;i<array.length;i++){
-        *this[i]=array[i];
+        (*this)[i]=array[i];
     }
 }
 
@@ -29,7 +29,7 @@ ExtendableArray<T>::ExtendableArray(ExtendableArray<T> &&array) {
     this->length=array.length;
     this->repoSize=array.repoSize;
     this->repo=array.repo;
-    array.repo= nullptr;
+    array.repo= new T[array.N];
     array.length=0;
     array.repoSize=0;
 }
@@ -134,7 +134,7 @@ ExtendableArray<T>& ExtendableArray<T>::operator=(ExtendableArray<T> &&array) {
     this->length=array.length;
     this->repoSize=array.repoSize;
     this->repo=array.repo;
-    array.repo= nullptr;
+    array.repo= new T[array.N];
     array.length=0;
     array.repoSize=0;
     return *this;
@@ -150,9 +150,16 @@ ArrayStack<T>::ArrayStack() {
 }
 
 template <class T>
-ArrayStack<T>::ArrayStack(patrick::ArrayStack<T> &&stack) {
+ArrayStack<T>::ArrayStack(ArrayStack<T> &&stack) {
     this->length=stack.length;
     this->stack=ExtendableArray<T>{stack};
+    stack.stack=ExtendableArray<T>{};
+    stack.length=0;
+}
+
+template <class T>
+ArrayStack<T>& ArrayStack<T>::operator=(ArrayStack<T> &&stack) {
+    //TODO
 }
 
 template <class T>
@@ -189,22 +196,83 @@ ArrayQueue<T>::ArrayQueue() {
 
 template <class T>
 ArrayQueue<T>::ArrayQueue(const ArrayQueue& queue){
-    //TODO
+    this->queue=new T[this->N];
+    if (front<next){
+        for(int i=front;i<next;i++){
+            (*this)[i]=queue[i];
+        }
+    } else{
+        if (front>next){
+            for (int i =front;i<this->N;i++){
+                (*this)[i]=queue[i];
+            }
+            for (int i=0;i<next;i++){
+                (*this)[i]=queue[i];
+            }
+        } else{
+            if (queue.size()==this->N){
+                for (int i=0;i<this->N;i++){
+                    (*this)[i]=queue[i];
+                }
+            }
+        }
+    }
+    this->length=queue.length;
+    this->front=queue.front;
+    this->next=queue.next;
 }
 
 template <class T>
 ArrayQueue<T>::ArrayQueue(ArrayQueue&& queue){
-    //TODO
+    this->queue=queue.queue;
+    queue.queue= new T[queue.N];
+    this->length=queue.length;
+    this->front=queue.front;
+    this->next=queue.next;
+    queue.length=0;
+    queue.front=0;
+    queue.next=0;
 }
 
 template <class T>
 ArrayQueue<T>& ArrayQueue<T>::operator=(const ArrayQueue& queue){
-    //TODO
+    if (front<next){
+        for(int i=front;i<next;i++){
+            (*this)[i]=queue[i];
+        }
+    } else{
+        if (front>next){
+            for (int i =front;i<this->N;i++){
+                (*this)[i]=queue[i];
+            }
+            for (int i=0;i<next;i++){
+                (*this)[i]=queue[i];
+            }
+        } else{
+            if (queue.size()==this->N){
+                for (int i=0;i<this->N;i++){
+                    (*this)[i]=queue[i];
+                }
+            }
+        }
+    }
+    this->length=queue.length;
+    this->front=queue.front;
+    this->next=queue.next;
 }
 
 template <class T>
 ArrayQueue<T>& ArrayQueue<T>::operator=(ArrayQueue&& queue){
-    //TODO
+    T* p=this->queue;
+    this->queue=queue.queue;
+    delete[] p;
+    queue.queue= new T[queue.N];
+    this->length=queue.length;
+    this->front=queue.front;
+    this->next=queue.next;
+    queue.length=0;
+    queue.front=0;
+    queue.next=0;
 }
 
 template <class T>
