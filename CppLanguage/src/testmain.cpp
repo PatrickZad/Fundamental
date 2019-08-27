@@ -2,6 +2,16 @@
 // Created by Patrick on 2019/6/25.
 //
 #include "testFuncs.h"
+#include <vector>
+#include <iostream>
+#include <utility>
+class TestRref{
+public:
+    std::vector<int> v=std::vector<int>{};
+};
+void testrr(std::vector<int>&& v){
+    std::cout<<"done";
+}
 int main(){
     int k=6;
     int& rk=k;
@@ -10,5 +20,7 @@ int main(){
     //test::namedTypeTrans();
     //test::refAndptr();
     test::deletearray();
+    TestRref obj=TestRref{};
+    testrr(std::move(obj).v);
     return 0;
 }

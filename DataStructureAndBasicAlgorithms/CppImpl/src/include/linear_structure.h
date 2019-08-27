@@ -20,7 +20,7 @@ namespace patrick{
         bool insert(unsigned int ,T&);
         T remove(unsigned int);
         void clear();
-        T* operator[](unsigned int);
+        T& operator[](unsigned int);
         ExtendableArray& operator=(const ExtendableArray& array);
         ExtendableArray& operator=(ExtendableArray&& array);
     private:
@@ -67,23 +67,26 @@ namespace patrick{
         unsigned int front;
         unsigned int next;
     };
+
     template <class T>
     class ArrayList{
     public:
         ArrayList();
-        bool insert(unsigned int, T&);
-        T* remove(unsigned int);
+        ArrayList(ArrayList&& list);
+        ArrayList& operator=(ArrayList&& list);
+        void insert(unsigned int index, T& data);
+        T remove(unsigned int index);
         unsigned int size();
-        T* operator[](unsigned int);
-        bool append(T&);
+        T& operator[](unsigned int);
+        void append(T&);
     private:
-        ExtendableArray<T*> list;
+        ExtendableArray<T> list;
         unsigned int length;
     };
 
     template <class T>
     struct LinkedNode{
-        T* data;
+        T data;
         LinkedNode<T>* previous;
         LinkedNode<T>* next;
     };
@@ -92,13 +95,20 @@ namespace patrick{
     class LinkedList{
     public:
         LinkedList();
-        bool insert(unsigned int, T&);
-        bool remove(unsigned int);
+        LinkedList(const LinkedList& list);
+        LinkedList(LinkedList&& list);
+        ~LinkedList();
+        LinkedList& operator=(const LinkedList& list);
+        LinkedList& operator=(LinkedList&& list);
+        void insert(unsigned int, T&);
+        T remove(unsigned int);
+        void append(T& data);
         unsigned int size();
-        T* operator[](unsigned int);
+        T& operator[](unsigned int);
     private:
         unsigned int length;
         LinkedNode<T>* head;
+        void releaseRecursivly(LinkedNode<T>* node);
     };
 
     class OutofIndexException{};

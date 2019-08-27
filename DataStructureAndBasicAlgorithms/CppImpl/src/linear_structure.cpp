@@ -110,7 +110,7 @@ void ExtendableArray<T>::clear() {
     this->repoSize=this->N;
 }
 template <class T>
-T* ExtendableArray<T>::operator[](unsigned int index){
+T& ExtendableArray<T>::operator[](unsigned int index){
     if(index<length){
         return this->repo[index];
     } else{
@@ -152,14 +152,15 @@ ArrayStack<T>::ArrayStack() {
 template <class T>
 ArrayStack<T>::ArrayStack(ArrayStack<T> &&stack) {
     this->length=stack.length;
-    this->stack=ExtendableArray<T>{stack};
-    stack.stack=ExtendableArray<T>{};
+    this->stack=ExtendableArray<T>{stack.stack};
     stack.length=0;
 }
 
 template <class T>
 ArrayStack<T>& ArrayStack<T>::operator=(ArrayStack<T> &&stack) {
-    //TODO
+    this->length=stack.length;
+    this->stack=stack.stack;
+    stack.length=0;
 }
 
 template <class T>
@@ -309,34 +310,47 @@ unsigned int ArrayQueue<T>::size() {
  * */
 template <class T>
 ArrayList<T>::ArrayList() {
-    this->list=ExtendableArray<T*>();
+    this->list=ExtendableArray<T>{};
     this->length=0;
 }
+
 template <class T>
-bool ArrayList<T>::insert(unsigned int index, T & element) {
+ArrayList<T>::ArrayList(ArrayList &&list) {
+    this->length=list.length;
+    this->list=ExtendableArray<T>{list.list};
+    list.length=0;
+}
+
+template < class T>
+ArrayList<T>& ArrayList<T>::operator=(ArrayList<T> &&list) {
+    this->length=list.length;
+    this->list=list.list;
+    list.length=0;
+}
+
+template <class T>
+void ArrayList<T>::insert(unsigned int index, T & element) {
     if(index>length){
-        return false;
+        throw OutofIndexException{};
     }else
         if(index==length){
-            list.append(&element);
+            list.append(element);
             length+=1;
-            return true;
         } else{
             list.append(list[length-1]);
             for (long i=length-2;i>index;i--){
                 list[i+1]=list[i];
             }
-            list[index]=&element;
+            list[index]=element;
             length+=1;
-            return true;
         }
 }
 template <class T>
-T* ArrayList<T>::remove(unsigned int index) {
+T ArrayList<T>::remove(unsigned int index) {
     if (index>=length){
-        return nullptr;
+        throw OutofIndexException{};
     }
-    T* result=list[index];
+    T result=list[index];
     for (unsigned int i =index+1;i<length;i++){
         list[i-1]=list[i];
     }
@@ -348,27 +362,92 @@ unsigned int ArrayList<T>::size() {
     return length;
 }
 template <class T>
-T* ArrayList<T>::operator[](unsigned int index) {
+T& ArrayList<T>::operator[](unsigned int index) {
     if(index>=length){
-        return nullptr;
+        throw OutofIndexException{};
     }
     return list[index];
 }
 template <class T>
-bool ArrayList<T>::append(T & element) {
-    list.append(&element);
+void ArrayList<T>::append(T & element) {
+    list.append(element);
     length+=1;
 }
+
+/*
+ * LinkedList
+ * */
 template <class T>
 LinkedList<T>::LinkedList() {
     length=0;
-    BinaryNode<T> headnode=BinaryNode<T>{nullptr, nullptr, nullptr};
-    head=&headnode;
+    head= nullptr;
 }
+
 template <class T>
-T* LinkedList<T>::operator[](unsigned int index) {
+void LinkedList<T>::releaseRecursivly(LinkedNode<T> *node) {
+    if(node == nullptr){
+        return;
+    }
+    releaseRecursivly(node->next);
+    delete node;
+}
+
+template <class T>
+LinkedList<T>::~LinkedList() {
+    length=0;
+    this->releaseRecursivly(this->head);
+}
+
+template <class T>
+LinkedList<T>::LinkedList(const LinkedList& list){
+    head=new LinkedNode<T>{list.head->data, nullptr, nullptr};
+    LinkedNode<T>* pre=head;
+    LinkedNode<T>* sourcenode=list.head->next;
+    for (unsigned int i=1;i<list.length;i++){
+        LinkedNode<T>* node=new LinkedNode<T>{sourcenode->data,pre, nullptr};
+        pre->next=node;
+        pre=node;
+        sourcenode=sourcenode->next;
+    }
+    this->length=list.length;
+}
+
+template <class T>
+LinkedList<T>::LinkedList(LinkedList&& list){
+    this->head=list.head;
+    this->length=list.length;
+    list.head= nullptr;
+    list.length=0;
+}
+
+template <class T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList& list){
+    releaseRecursivly(head);
+    head=new LinkedNode<T>{list.head->data, nullptr, nullptr};
+    LinkedNode<T>* pre=head;
+    LinkedNode<T>* sourcenode=list.head->next;
+    for (unsigned int i=1;i<list.length;i++){
+        LinkedNode<T>* node=new LinkedNode<T>{sourcenode->data,pre, nullptr};
+        pre->next=node;
+        pre=node;
+        sourcenode=sourcenode->next;
+    }
+    this->length=list.length;
+}
+
+template <class T>
+LinkedList<T>& LinkedList<T>::operator=(LinkedList&& list){
+    releaseRecursivly(head);
+    this->head=list.head;
+    this->length=list.length;
+    list.head= nullptr;
+    list.length=0;
+}
+
+template <class T>
+T& LinkedList<T>::operator[](unsigned int index) {
     if(index>=length){
-        return nullptr;
+        throw OutofIndexException{};
     }
     unsigned int count=0;
     LinkedNode<T>* nodep=head;
@@ -376,16 +455,17 @@ T* LinkedList<T>::operator[](unsigned int index) {
         nodep=nodep->next;
         count+=1;
     }
-    return nodep;
+    return nodep->data;
 }
 template <class T>
 unsigned int LinkedList<T>::size() {
     return length;
 }
+
 template <class T>
-bool LinkedList<T>::insert(unsigned int index, T & element) {
+void LinkedList<T>::insert(unsigned int index, T & element) {
     if (index>length){
-        return false;
+        throw OutofIndexException{};
     }
     unsigned int count=0;
     LinkedNode<T>* nodep=head;
@@ -393,16 +473,16 @@ bool LinkedList<T>::insert(unsigned int index, T & element) {
         nodep=nodep->next;
         count+=1;
     }
-    LinkedNode<T> node=LinkedNode<T>{&element,nodep,nodep->next};
-    nodep->next=&node;
-    (node.next)->previous=&node;
+    LinkedNode<T>* node=new LinkedNode<T>{&element,nodep,nodep->next};
+    nodep->next=node;
+    (node->next)->previous=node;
     length+=1;
-    return true;
 }
+
 template <class T>
-bool LinkedList<T>::remove(unsigned int index) {
+T LinkedList<T>::remove(unsigned int index) {
     if(index>=length){
-        return false;
+        throw OutofIndexException{};
     }
     unsigned int count=0;
     LinkedNode<T>* nodep=head;
@@ -412,6 +492,21 @@ bool LinkedList<T>::remove(unsigned int index) {
     }
     nodep->previous->next=nodep->next;
     nodep->next->previous=nodep->previous;
+    T result=nodep->data;
+    delete nodep;
     length-=1;
-    return true;
+    return result;
+}
+
+template <class T>
+void LinkedList<T>::append(T &data){
+    if (this->length==0){
+        this->head=new LinkedNode<T>{data, nullptr, nullptr};
+        return;
+    }
+    LinkedNode<T>* pre=this->head;
+    while (pre->next!= nullptr){
+        pre=pre->next;
+    }
+    pre->next=new LinkedNode<T>{data,pre, nullptr};
 }
