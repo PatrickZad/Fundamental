@@ -5,7 +5,7 @@
 #ifndef CPPIMPL_LINEAR_STRUCTURE_H
 #define CPPIMPL_LINEAR_STRUCTURE_H
 
-
+#include <exception>
 namespace patrick{
 //Element will be copied to these collections.
     template <class T>
@@ -111,8 +111,6 @@ namespace patrick{
         void releaseRecursivly(LinkedNode<T>* node);
     };
 
-    class OutofIndexException{};
-    class StorageOverflow{};
-    class NullContainer{};
+
 }
 #endif //CPPIMPL_LINEAR_STRUCTURE_H

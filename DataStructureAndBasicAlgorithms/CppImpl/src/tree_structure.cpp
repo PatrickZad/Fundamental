@@ -8,27 +8,21 @@ using namespace patrick;
  * Binary node methods implementations
  * */
 template <class K, class T>
-BinaryNode<K,T>::BinaryNode() {
-    data= nullptr;
-}
-
-template <class K, class T>
-BinaryNode<K,T>::BinaryNode(K key, T *data) {
+BinaryNode<K,T>::BinaryNode(K key, T& data,BinaryNode<K,T>* left, BinaryNode<K,T>* right) {
     this->key=key;
     this->data=data;
+    this->left=left;
+    this->right= right;
 }
 
 template <class K, class T>
-BinaryNode<K,T>::BinaryNode(BinaryNode<K, T> &node) {
-    this->key=node.key;
-    this->data=node.data;
-}
-
-template <class K, class T>
-BinaryNode<K,T>& BinaryNode<K,T>::operator=(const BinaryNode<K, T> &node) {
-    key=node.key;
-    data=node.data;
-    return *this;
+DoublyLinkedBinaryNode<K,T>::DoublyLinkedBinaryNode(K key,T& data, BinaryNode<K,T>* parent,
+                       BinaryNode<K,T>* left, BinaryNode<K,T>* right){
+    this->key=key;
+    this->data=data;
+    this->left=left;
+    this->right= right;
+    this->parent=parent;
 }
 
 /*
@@ -38,12 +32,25 @@ BinaryNode<K,T>& BinaryNode<K,T>::operator=(const BinaryNode<K, T> &node) {
 template < class K, class T>
 BinaryTree<K,T>::BinaryTree() {
     this->length=0;
+    this->root= nullptr;
 }
 
 template < class K, class T>
-BinaryTree<K,T>::BinaryTree(T *data) {
-    this->root=BinaryNode<K,T>{data, nullptr, nullptr};
-    this->length=1;
+BinaryTree<K,T>::~BinaryTree() {
+    class ReleaseTreeFunc {
+    public:
+        void operator()(BinaryNode<K,T>* node){
+            delete node;
+        }
+    };
+    ReleaseTreeFunc func=ReleaseTreeFunc{};
+    postOrderTraversal(this->root,func);
+}
+
+
+template < class K, class T>
+BinaryTree<K,T>::BinaryTree(const BinaryTree& tree) {
+
 }
 
 template < class K, class T>
@@ -90,7 +97,7 @@ void BinaryTree<K,T>::threaded(char order) {
  * Binary search tree methods implementation
  * */
 template < class K, class T>
-bool BinarySearchTree<K,T>::set(K key, T *data) {
+void BinarySearchTree<K,T>::set(K key, T *data) {
 
 }
 
@@ -110,7 +117,7 @@ T* BinarySearchTree<K,T>::get(K key) {
     return nullptr;
 }
 template < class K, class T>
-bool BinarySearchTree<K,T>::insert(K key, T& data) {
+void BinarySearchTree<K,T>::insert(K key, T& data) {
     BinaryNode<K,T> node=BinaryNode<K,T>{key,data};
     if(this->length==0){
         this->repo.push_back(this->root);
@@ -173,7 +180,7 @@ T* BinarySearchTree<K,T>::remove(K key) {
  * */
 
 template < class K, class T>
-bool BalancedBinarySearchTree<K,T>::insert(K key, T& data) {
+void BalancedBinarySearchTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>
@@ -185,7 +192,7 @@ T* BalancedBinarySearchTree<K,T>::remove(K key) {
  * AVL tree methods implementation
  * */
 template < class K, class T>
-bool AVLTree<K,T>::insert(K key, T& data) {
+void AVLTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>
@@ -196,7 +203,7 @@ T* AVLTree<K,T>::remove(K key) {
  * RedBlack tree methods implementation
  * */
 template < class K, class T>
-bool RedBlackTree<K,T>::insert(K key, T& data) {
+void RedBlackTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>

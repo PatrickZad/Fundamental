@@ -16,4 +16,4 @@ add_executable(test
         src/linear_structure.cpp
         src/tree_structure.cpp
         src/kv_structure.cpp
-        src/test.cpp)
+        src/test.cpp src/include/exception.h)

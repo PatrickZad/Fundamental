@@ -23,12 +23,10 @@ namespace patrick{
     template <class K, class T>
     class BinaryNode{
     public:
-        BinaryNode();
-        BinaryNode(K key,T* data);
-        BinaryNode(BinaryNode<K,T>& node);
-        BinaryNode<K,T>& operator=(const BinaryNode<K,T>& node);
+        BinaryNode(K key,T& data,BinaryNode<K,T>* left = nullptr,
+                BinaryNode<K,T>* right = nullptr);
         K key;
-        T* data;
+        T data;
         BinaryNode<K,T>* left = nullptr;
         BinaryNode<K,T>* right = nullptr;
 
@@ -36,10 +34,14 @@ namespace patrick{
     template <class K, class T>
     class DoublyLinkedBinaryNode{
     public:
+        DoublyLinkedBinaryNode(K key,T& data,
+                BinaryNode<K,T>* parent= nullptr,
+                BinaryNode<K,T>* left = nullptr,
+                BinaryNode<K,T>* right = nullptr);
         DoublyLinkedBinaryNode<K,T>* parent= nullptr;
     };
     template <class K, class T>
-    class RankedBinaryNode:BinaryNode<K,T>{
+    class RankedDoublyLinkedBinaryNode:DoublyLinkedBinaryNode<K,T>{
     public:
         int rank;
     };
@@ -51,49 +53,48 @@ namespace patrick{
     class BinaryTree{
     public:
         BinaryTree();
-        BinaryTree(T* data);
+        ~BinaryTree();
+        BinaryTree(const BinaryTree& tree);
+        BinaryTree(BinaryTree&& tree);
+        BinaryTree& operator=(const BinaryTree& tree);
+        BinaryTree& operator=(BinaryTree&& tree);
         unsigned int size();
-        virtual bool set(K key, T* data)=0;
-        virtual T* get(K key)=0;
-        virtual bool insert(K key, T& data)=0;
-        virtual bool remove(K key)=0;
+        virtual void set(K key, T* data)=0;
+        virtual T& get(K key)=0;
+        virtual void insert(K key, T& data)=0;
+        virtual T remove(K key)=0;
         void threaded(char order);
         BinaryNode<K, T>* getRoot();
-        BinaryNode<K, T>* root;
-        //BinaryNode is designed to be accessible only by BinaryTree objects,
-        //for which a BinaryTree object should maintain
-        // a collection of BinaryNode instances
-        //TODO Use vector for now, later change to ExtendableArray
-        std::vector<BinaryNode<K,T>> repo=std::vector<BinaryNode<K,T>>{};
     private:
+        BinaryNode<K, T>* root;
         unsigned int length;
     };
 
     template < class K, class T>
     class BinarySearchTree:BinaryTree<K, T>{
     public:
-        bool set(K key, T* data);
-        T* get(K key);
-        bool insert(K key, T& data);
-        T* remove(K key);
+        void set(K key, T* data);
+        T& get(K key);
+        void insert(K key, T& data);
+        T remove(K key);
     };
     template < class K, class T>
     class BalancedBinarySearchTree:BinarySearchTree<K, T>{
     public:
-        bool insert(K key, T& data);
-        T* remove(K key);
+        void insert(K key, T& data);
+        T remove(K key);
     };
     template < class K, class T >
     class AVLTree:BalancedBinarySearchTree<K,T>{
     public:
-        bool insert(K key, T& data);
-        T* remove(K key);
+        void insert(K key, T& data);
+        T remove(K key);
     };
     template <class K, class T>
     class RedBlackTree:BalancedBinarySearchTree<K,T>{
     public:
-        bool insert(K key, T& data);
-        T* remove(K key);
+        void insert(K key, T& data);
+        T remove(K key);
     };
 
     /*

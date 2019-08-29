@@ -1,8 +1,9 @@
 //
 // Created by pengcheng.zhang on 2019-07-24.
 //
-#include <utility>
+
 #include "linear_structure.h"
+#include "exception.h"
 using namespace patrick;
 /*
  * ExtendableArray
@@ -389,6 +390,7 @@ void LinkedList<T>::releaseRecursivly(LinkedNode<T> *node) {
         return;
     }
     releaseRecursivly(node->next);
+    node->previous->next= nullptr;
     delete node;
 }
 
