@@ -3,6 +3,7 @@
 //
 #include "tree_structure.h"
 #include "linear_structure.h"
+#include "exception.h"
 using namespace patrick;
 /*
  * Binary node methods implementations
@@ -37,6 +38,77 @@ BinaryTree<K,T>::BinaryTree() {
 
 template < class K, class T>
 BinaryTree<K,T>::~BinaryTree() {
+    releaseTree(this->root);
+    this->length=0;
+}
+
+
+template < class K, class T>
+BinaryTree<K,T>::BinaryTree(const BinaryTree& tree) {
+    copyTree(this->root,tree.root);
+    this->length=tree.length;
+}
+
+template < class K, class T>
+BinaryTree<K,T>::BinaryTree(BinaryTree&& tree){
+    this->root=tree.root;
+    this->length=tree.length;
+    tree.root=nullptr;
+    tree.length=0;
+}
+
+template < class K, class T>
+BinaryTree<K,T>& BinaryTree<K,T>::operator=(const BinaryTree& tree){
+    releaseTree(this->root);
+    this->root= nullptr;
+    copyTree(this->root,tree.root);
+    this->length=tree.length;
+}
+
+template < class K, class T>
+BinaryTree<K,T>& BinaryTree<K,T>::operator=(BinaryTree&& tree){
+    releaseTree(this->root);
+    this->root=tree.root;
+    this->length=tree.length;
+    tree.root=nullptr;
+    tree.length=0;
+}
+
+template < class K, class T>
+void  BinaryTree<K,T>::copyTree(BinaryNode<K,T>*& objectRoot, BinaryNode<K,T>*& sourceRoot) {
+    BinaryNode<K,T>* sourcePtr=sourcePtr;
+    objectRoot=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+    ArrayStack<BinaryNode<K,T>> sourceStack=ArrayStack<BinaryNode<K,T>*>{};
+    ArrayStack<BinaryNode<K,T>> objectStack=ArrayStack<BinaryNode<K,T>*>{};
+    sourceStack.push(sourcePtr);
+    objectStack.push(this->root);
+    sourcePtr=sourcePtr->left;
+    int flag=1;//1 means left, 0 means right
+    while (sourcePtr!= nullptr || sourceStack.size()>0){
+        if(sourcePtr!= nullptr){
+            BinaryNode<K,T>* obj=objectStack.pop();
+            if (flag){
+                obj->left=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+                objectStack.push(obj);
+                objectStack.push(obj->left);
+            } else{
+                obj->right=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+                objectStack.push(obj);
+                objectStack.push(obj->right);
+            }
+            sourceStack.push(*sourcePtr);
+            sourcePtr=sourcePtr->left;
+            flag=1;
+        } else{
+            sourcePtr=sourceStack.pop()->right;
+            objectStack.pop();
+            flag=0;
+        }
+    }
+}
+
+template < class K, class T>
+void  BinaryTree<K,T>::releaseTree(BinaryNode<K,T>*& root) {
     class ReleaseTreeFunc {
     public:
         void operator()(BinaryNode<K,T>* node){
@@ -44,13 +116,8 @@ BinaryTree<K,T>::~BinaryTree() {
         }
     };
     ReleaseTreeFunc func=ReleaseTreeFunc{};
-    postOrderTraversal(this->root,func);
-}
-
-
-template < class K, class T>
-BinaryTree<K,T>::BinaryTree(const BinaryTree& tree) {
-
+    postOrderTraversal(root,func);
+    root=nullptr;
 }
 
 template < class K, class T>
@@ -60,7 +127,7 @@ unsigned int BinaryTree<K,T>::size() {
 
 template < class K, class T>
 BinaryNode<K,T>* BinaryTree<K,T>::getRoot() {
-    return &(this->root);
+    return this->root;
 }
 
 template < class K, class T>
@@ -102,7 +169,7 @@ void BinarySearchTree<K,T>::set(K key, T *data) {
 }
 
 template < class K, class T>
-T* BinarySearchTree<K,T>::get(K key) {
+T& BinarySearchTree<K,T>::get(K key) {
     BinaryNode<K,T>* node=this->getRoot();
     while (node!= nullptr){
         if(*key==node->key){
@@ -114,36 +181,32 @@ T* BinarySearchTree<K,T>::get(K key) {
             node=node->left;
         }
     }
-    return nullptr;
+    throw NoSuchKeyExists{};
 }
 template < class K, class T>
 void BinarySearchTree<K,T>::insert(K key, T& data) {
-    BinaryNode<K,T> node=BinaryNode<K,T>{key,data};
+    BinaryNode<K,T>* node=new BinaryNode<K,T>{key,data};
     if(this->length==0){
-        this->repo.push_back(this->root);
-        this->root=&this->repo.back();
-        return true;
+        this->root=node;
+        this->length=1;
+        return;
     }
     BinaryNode<K,T>* parent=this->getRoot();
     while (parent!= nullptr){
         if(key==parent->key){
-            return false;
+            throw KeyAlreadyExists{};
         }
         if(key<parent->key){
             if(parent->left == nullptr){
-                this->repo.push_back(this->root);
-                parent->left=&this->repo.back();
+                parent->left=node;
                 this->length++;
-                return true;
             } else{
                 parent=parent->left;
             }
         } else{
             if (parent->right== nullptr){
-                this->repo.push_back(this->root);
-                parent->right=&this->repo.back();
+                parent->right=node;
                 this->length++;
-                return true;
             } else{
                 parent=parent->right;
             }
@@ -151,7 +214,7 @@ void BinarySearchTree<K,T>::insert(K key, T& data) {
     }
 }
 template < class K, class T>
-T* BinarySearchTree<K,T>::remove(K key) {
+T BinarySearchTree<K,T>::remove(K key) {
     BinaryNode<K,T>* node=this->root;
     BinaryNode<K,T>* parent=this->root;
     while (node!= nullptr){
@@ -184,7 +247,7 @@ void BalancedBinarySearchTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>
-T* BalancedBinarySearchTree<K,T>::remove(K key) {
+T BalancedBinarySearchTree<K,T>::remove(K key) {
     //TODO
 }
 
@@ -196,7 +259,7 @@ void AVLTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>
-T* AVLTree<K,T>::remove(K key) {
+T AVLTree<K,T>::remove(K key) {
     //TODO
 }
 /*
@@ -207,7 +270,7 @@ void RedBlackTree<K,T>::insert(K key, T& data) {
     //TODO
 }
 template < class K, class T>
-T* RedBlackTree<K,T>::remove(K key) {
+T RedBlackTree<K,T>::remove(K key) {
     //TODO
 }
 

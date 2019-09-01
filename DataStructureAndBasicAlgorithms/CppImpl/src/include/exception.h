@@ -10,5 +10,7 @@ namespace patrick{
     class OutofIndexException:std::exception{};
     class StorageOverflow:std::exception{};
     class NullContainer:std::exception{};
+    class NoSuchKeyExists:std::exception{};
+    class KeyAlreadyExists:std::exception{};
 }
 #endif //CPPIMPL_EXCEPTION_H

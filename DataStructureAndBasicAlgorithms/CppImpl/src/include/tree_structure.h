@@ -66,6 +66,8 @@ namespace patrick{
         void threaded(char order);
         BinaryNode<K, T>* getRoot();
     private:
+        void releaseTree(BinaryNode<K,T>*& root);
+        void copyTree(BinaryNode<K,T>*& objectRoot, BinaryNode<K,T>*& sourceRoot);
         BinaryNode<K, T>* root;
         unsigned int length;
     };
