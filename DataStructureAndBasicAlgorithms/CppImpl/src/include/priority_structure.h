@@ -2,11 +2,11 @@
 // Created by pengcheng.zhang on 2019-08-07.
 //
 
-#ifndef CPPIMPL_KV_STRUCTURE_H
-#define CPPIMPL_KV_STRUCTURE_H
+#ifndef CPPIMPL_PRIORITY_STRUCTURE_H
+#define CPPIMPL_PRIORITY_STRUCTURE_H
 namespace patrick{
     template <class K, class V>
-    struct item{
+    struct Item{
         K key;
         V value;
     };
@@ -15,8 +15,8 @@ namespace patrick{
     public:
         PriorityQueue();
         unsigned int size();
-        bool enqueue(K key, V value);
-        V* dequeue();
+        bool enqueue(K& key, V& value);
+        Item<K,V> dequeue();
     private:
         unsigned int length;
     };
@@ -27,16 +27,25 @@ namespace patrick{
         HeapNode* left;
         HeapNode* right;
     };
+
     template <class K, class V>
     class Heap{
     public:
         Heap();
         unsigned int size();
-        unsigned int height(K key);
-        unsigned int depth(K key);
-        void insert(K key, V value);
+        virtual unsigned int height(K& key)=0;
+        virtual unsigned int depth(K& key)=0;
+        virtual void insert(K& key, V& value)=0;
+        virtual void remove(K& key)=0;
     private:
         unsigned int length;
     };
+
+    template <class K, class V>
+    class ArrayHeap:Heap<K,V>{
+    public:
+        void insert(K& key, V& value);
+        Item<K,V> remove(K& key);
+    };
 }
-#endif //CPPIMPL_KV_STRUCTURE_H
+#endif //CPPIMPL_PRIORITY_STRUCTURE_H

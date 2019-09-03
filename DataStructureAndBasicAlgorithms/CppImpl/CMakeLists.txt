@@ -10,10 +10,10 @@ add_executable(test
         src/include/sort_patrick.h
         src/include/linear_structure.h
         src/include/tree_structure.h
-        src/include/kv_structure.h
+        src/include/priority_structure.h
         src/others_patrick.cpp
         src/sort_patrick.cpp
         src/linear_structure.cpp
         src/tree_structure.cpp
-        src/kv_structure.cpp
+        src/priority_structure.cpp
         src/test.cpp src/include/exception.h)
