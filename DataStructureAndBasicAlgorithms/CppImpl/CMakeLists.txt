@@ -16,4 +16,4 @@ add_executable(test
         src/linear_structure.cpp
         src/tree_structure.cpp
         src/priority_structure.cpp
-        src/test.cpp src/include/exception.h)
+        src/test.cpp src/include/exception.h src/include/hash_map.cpp src/include/hash_map.h)
