@@ -17,8 +17,8 @@ BinaryNode<K,T>::BinaryNode(K key, T& data,BinaryNode<K,T>* left, BinaryNode<K,T
 }
 
 template <class K, class T>
-DoublyLinkedBinaryNode<K,T>::DoublyLinkedBinaryNode(K key,T& data, BinaryNode<K,T>* parent,
-                       BinaryNode<K,T>* left, BinaryNode<K,T>* right){
+DLBinaryNode<K,T>::DLBinaryNode(K key, T& data, BinaryNode<K,T>* parent,
+                                BinaryNode<K,T>* left, BinaryNode<K,T>* right){
     this->key=key;
     this->data=data;
     this->left=left;
@@ -163,9 +163,47 @@ void BinaryTree<K,T>::threaded(char order) {
 /*
  * Binary search tree methods implementation
  * */
-template < class K, class T>
-void BinarySearchTree<K,T>::set(K key, T *data) {
+template <class K, class T>
+BinarySearchTree<K,T>::BinarySearchTree(){
+    this->length=0;
+    this->root=nullptr;
+}
 
+template <class K, class T>
+BinarySearchTree<K,T>::~BinarySearchTree(){
+    this->releaseTree(this->root);
+    this->length=0;
+}
+
+template <class K, class T>
+BinarySearchTree<K,T>::BinarySearchTree(const BinarySearchTree& tree){
+    copyTree(this->root,tree.root);
+    this->length=tree.length;
+}
+
+template <class K, class T>
+BinarySearchTree<K,T>::BinarySearchTree(BinarySearchTree&& tree){
+    this->root=tree.root;
+    this->length=tree.length;
+    tree.root=nullptr;
+    tree.length=0;
+}
+
+template < class K, class T>
+void BinarySearchTree<K,T>::set(K key, T& data) {
+    BinaryNode<K,T>* node=this->getRoot();
+    while (node!= nullptr){
+        if(*key==node->key){
+            node->data=data;
+            return;
+        } else
+        if(key>node->key){
+            node=node->right;
+        } else{
+            node=node->left;
+        }
+    }
+    throw NoSuchKeyExists{};
 }
 
 template < class K, class T>
@@ -230,11 +268,44 @@ T BinarySearchTree<K,T>::remove(K key) {
         }
     }
     if (node!= nullptr){
-        if (node->left==node->right== nullptr){
-
-        }
+        if (node->left== nullptr){
+            if (parent->left==node){
+                parent->left=node->right;
+            } else{
+                parent->right=node->right;
+            }
+            T data=node->data;
+            delete node;
+            return data;
+        } else
+            if (node->right== nullptr){
+                if (parent->left==node){
+                    parent->left=node->left;
+                } else{
+                    parent->right=node->left;
+                }
+                T data=node->data;
+                delete node;
+                return data;
+            } else{
+                //find minimum in right subtree and replace
+                BinaryNode<K,T>* g= node;
+                BinaryNode<K,T>* p= node->left;
+                BinaryNode<K,T>* m=p->left;
+                while (m!=nullptr){
+                    g=p;
+                    p=m;
+                    m=m->left;
+                }
+                T result=node->data;
+                node->key=p->key;
+                node->data=p->data;
+                g->left=p->right;
+                delete g;
+                return result;
+            }
     } else{
-        return nullptr;
+        throw NoSuchKeyExists{};
     }
 }
 
@@ -243,12 +314,87 @@ T BinarySearchTree<K,T>::remove(K key) {
  * */
 
 template < class K, class T>
-void BalancedBinarySearchTree<K,T>::insert(K key, T& data) {
-    //TODO
-}
-template < class K, class T>
-T BalancedBinarySearchTree<K,T>::remove(K key) {
-    //TODO
+void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
+    //TODO dynamic_cast
+    RankedDLBinaryNode<K,T>* parent=node->parent;
+    RankedDLBinaryNode<K,T>* grandParent=parent->parent;
+    if(grandParent->right==parent){
+        if (node==parent->right){
+            parent->parent==grandParent->parent;
+            if (grandParent->parent!= nullptr){
+                if (grandParent->parent->left==grandParent){
+                    grandParent->parent->left=parent;
+                } else{
+                    grandParent->parent->right=parent;
+                }
+            }
+            if (parent->left!= nullptr){
+                DLBinaryNode<K,T>* parentLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(parent->left);
+                parentLeftChild->parent=grandParent;
+            }
+            grandParent->right=parent->left;
+            parent->left=grandParent;
+        } else{
+            node->parent=grandParent->parent;
+            if (grandParent->parent->left==grandParent){
+                grandParent->parent->left=node;
+            } else{
+                grandParent->parent->right=node;
+            }
+            grandParent->right=node->left;
+            if (node->left!= nullptr){
+                DLBinaryNode<K,T>* nodeLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(node->left);
+                nodeLeftChild->parent=grandParent;
+            }
+            parent->left=node->right;
+            if (node->right!= nullptr){
+                DLBinaryNode<K,T>* nodeRightChild= dynamic_cast<DLBinaryNode<K,T>*>(node->right);
+                nodeRightChild->parent=grandParent;
+            }
+            grandParent->parent=node;
+            node->left=grandParent;
+            parent->parent=node;
+            node->right=parent;
+        }
+    } else{
+        if (node==parent->left){
+            parent->parent==grandParent->parent;
+            if (grandParent->parent!= nullptr){
+                if (grandParent->parent->left==grandParent){
+                    grandParent->parent->left=parent;
+                } else{
+                    grandParent->parent->right=parent;
+                }
+            }
+            if(parent->right!= nullptr){
+                DLBinaryNode<K,T>* parentRightChild= dynamic_cast<DLBinaryNode<K,T>*>(parent->right);
+                parentRightChild->parent=grandParent;
+            }
+            grandParent->left=parent->right;
+            parent->right=grandParent;
+        } else{
+            node->parent=grandParent->parent;
+            if (grandParent->parent->left==grandParent){
+                grandParent->parent->left=node;
+            } else{
+                grandParent->parent->right=node;
+            }
+            grandParent->left=node->right;
+            if (node->right!= nullptr){
+                DLBinaryNode<K,T>* nodeRightChild= dynamic_cast<DLBinaryNode<K,T>*>(node->right);
+                nodeRightChild->parent=grandParent;
+            }
+            parent->right=node->left;
+            if (node->left!= nullptr){
+                DLBinaryNode<K,T>* nodeLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(node->left);
+                nodeLeftChild->parent=grandParent;
+            }
+            grandParent->parent=node;
+            node->right=grandParent;
+            parent->parent=node;
+            node->left=parent;
+        }
+    }
 }
 
 /*

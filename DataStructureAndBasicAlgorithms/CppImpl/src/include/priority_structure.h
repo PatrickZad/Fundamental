@@ -4,6 +4,8 @@
 
 #ifndef CPPIMPL_PRIORITY_STRUCTURE_H
 #define CPPIMPL_PRIORITY_STRUCTURE_H
+
+#include "linear_structure.h"
 namespace patrick{
     template <class K, class V>
     struct Item{
@@ -46,6 +48,31 @@ namespace patrick{
     public:
         void insert(K& key, V& value);
         Item<K,V> remove(K& key);
+        unsigned int height(K& key);
+        unsigned int depth(K& key);
+    private:
+        ExtendableArray<Item<K,V>> array;
+        unsigned int parentIndexOf(unsigned int index);
+        unsigned int leftIndexOf(unsigned int index);
+        unsigned int rightIndexOf(unsigned int index);
+    };
+
+    template <class K, class V>
+    class TreeHeap:Heap<K,V>{
+    public:
+        TreeHeap();
+        ~TreeHeap();
+        TreeHeap(const TreeHeap& heap);
+        TreeHeap(TreeHeap&& heap);
+        TreeHeap& operator=(const TreeHeap& heap);
+        TreeHeap& operator=(TreeHeap&& heap);
+        void insert(K& key, V& value);
+        Item<K,V> remove(K& key);
+        unsigned int height(K& key);
+        unsigned int depth(K& key);
+
+    private:
+        HeapNode<K,V>* root;
     };
 }
 #endif //CPPIMPL_PRIORITY_STRUCTURE_H

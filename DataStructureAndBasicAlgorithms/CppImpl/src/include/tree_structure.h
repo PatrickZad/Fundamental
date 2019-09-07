@@ -31,17 +31,23 @@ namespace patrick{
         BinaryNode<K,T>* right = nullptr;
 
     };
+    /*
+     * Doubly-linked BinaryNode
+     * */
     template <class K, class T>
-    class DoublyLinkedBinaryNode{
+    class DLBinaryNode: BinaryNode<K,T>{
     public:
-        DoublyLinkedBinaryNode(K key,T& data,
-                BinaryNode<K,T>* parent= nullptr,
-                BinaryNode<K,T>* left = nullptr,
-                BinaryNode<K,T>* right = nullptr);
-        DoublyLinkedBinaryNode<K,T>* parent= nullptr;
+        DLBinaryNode(K key, T& data,
+                     DLBinaryNode<K,T>* parent= nullptr,
+                     DLBinaryNode<K,T>* left = nullptr,
+                     DLBinaryNode<K,T>* right = nullptr);
+        DLBinaryNode<K,T>* parent= nullptr;
     };
+    /*
+     * Doubly-linked BinaryNode with rank
+     * */
     template <class K, class T>
-    class RankedDoublyLinkedBinaryNode:DoublyLinkedBinaryNode<K,T>{
+    class RankedDLBinaryNode: DLBinaryNode<K,T>{
     public:
         int rank;
     };
@@ -75,28 +81,38 @@ namespace patrick{
     template < class K, class T>
     class BinarySearchTree:BinaryTree<K, T>{
     public:
-        void set(K key, T* data);
+        BinarySearchTree();
+        ~BinarySearchTree();
+        BinarySearchTree(const BinarySearchTree& tree);
+        BinarySearchTree(BinarySearchTree&& tree);
+        void set(K key, T& data);
         T& get(K key);
         void insert(K key, T& data);
         T remove(K key);
     };
     template < class K, class T>
     class BalancedBinarySearchTree:BinarySearchTree<K, T>{
-    public:
-        void insert(K key, T& data);
-        T remove(K key);
+    private:
+        void restructure(RankedDLBinaryNode<K,T>* node);
+        virtual int rankOfNode(RankedDLBinaryNode<K,T>* node)=0;
     };
     template < class K, class T >
     class AVLTree:BalancedBinarySearchTree<K,T>{
     public:
         void insert(K key, T& data);
         T remove(K key);
+
+    private:
+        int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
     template <class K, class T>
     class RedBlackTree:BalancedBinarySearchTree<K,T>{
     public:
         void insert(K key, T& data);
         T remove(K key);
+
+    private:
+        int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
 
     /*
