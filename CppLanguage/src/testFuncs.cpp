@@ -47,3 +47,7 @@ void test::deletearray() {
     array1[0]=&num;
 }
 
+void test::dynamicCastTest() {
+    BasicC* bcp=new DerivedC{};
+}
+
