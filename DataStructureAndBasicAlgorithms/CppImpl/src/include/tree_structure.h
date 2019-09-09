@@ -49,7 +49,7 @@ namespace patrick{
     template <class K, class T>
     class RankedDLBinaryNode: DLBinaryNode<K,T>{
     public:
-        int rank;
+        int rank=-1;
     };
     /*
      * Binary tree and its derived classes
@@ -59,7 +59,7 @@ namespace patrick{
     class BinaryTree{
     public:
         BinaryTree();
-        ~BinaryTree();
+        virtual ~BinaryTree();
         BinaryTree(const BinaryTree& tree);
         BinaryTree(BinaryTree&& tree);
         BinaryTree& operator=(const BinaryTree& tree);
