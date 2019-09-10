@@ -51,3 +51,15 @@ void test::dynamicCastTest() {
     BasicC* bcp=new DerivedC{};
 }
 
+void test::BaseClass::func() {
+    std::cout<<"Base func";
+}
+
+void test::DerivedClass::func() {
+    std::cout<<"Derived func";
+}
+
+void test::testVirtual(test::BaseClass *obj) {
+    obj->func();
+}
+

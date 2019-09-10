@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <utility>
+#include "testFuncs.h"
 class TestRref{
 public:
     std::vector<int> v=std::vector<int>{};
@@ -19,8 +20,10 @@ int main(){
     //test::lambdaExpr();
     //test::namedTypeTrans();
     //test::refAndptr();
-    test::deletearray();
-    TestRref obj=TestRref{};
-    testrr(std::move(obj).v);
+    //test::deletearray();
+    //TestRref obj=TestRref{};
+    //testrr(std::move(obj).v);
+    test::DerivedClass* ptr = new test::DerivedClass{};
+    test::testVirtual(ptr);
     return 0;
 }
