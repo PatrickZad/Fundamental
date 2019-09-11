@@ -35,7 +35,7 @@ namespace patrick{
      * Doubly-linked BinaryNode
      * */
     template <class K, class T>
-    class DLBinaryNode: BinaryNode<K,T>{
+    class DLBinaryNode: public BinaryNode<K,T>{
     public:
         DLBinaryNode(K key, T& data,
                      DLBinaryNode<K,T>* parent= nullptr,
@@ -47,7 +47,7 @@ namespace patrick{
      * Doubly-linked BinaryNode with rank
      * */
     template <class K, class T>
-    class RankedDLBinaryNode: DLBinaryNode<K,T>{
+    class RankedDLBinaryNode: public DLBinaryNode<K,T>{
     public:
         int rank=-1;
     };
@@ -79,7 +79,7 @@ namespace patrick{
     };
 
     template < class K, class T>
-    class BinarySearchTree:BinaryTree<K, T>{
+    class BinarySearchTree: public BinaryTree<K, T>{
     public:
         BinarySearchTree();
         ~BinarySearchTree();
@@ -91,14 +91,17 @@ namespace patrick{
         T remove(K key);
     };
     template < class K, class T>
-    class BalancedBinarySearchTree:BinarySearchTree<K, T>{
+    class BalancedBinarySearchTree : public BinarySearchTree<K, T>{
+    public:
+        ~BalancedBinarySearchTree();
     private:
         void restructure(RankedDLBinaryNode<K,T>* node);
         virtual int rankOfNode(RankedDLBinaryNode<K,T>* node)=0;
     };
     template < class K, class T >
-    class AVLTree:BalancedBinarySearchTree<K,T>{
+    class AVLTree : public BalancedBinarySearchTree<K,T>{
     public:
+        ~AVLTree();
         void insert(K key, T& data);
         T remove(K key);
 
@@ -106,7 +109,7 @@ namespace patrick{
         int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
     template <class K, class T>
-    class RedBlackTree:BalancedBinarySearchTree<K,T>{
+    class RedBlackTree : public BalancedBinarySearchTree<K,T>{
     public:
         void insert(K key, T& data);
         T remove(K key);
