@@ -3,7 +3,7 @@ project(CppImpl)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(src/include)
+include_directories(src/include test/include)
 
 add_executable(test
         src/include/others_patrick.h
@@ -16,4 +16,9 @@ add_executable(test
         src/linear_structure.cpp
         src/tree_structure.cpp
         src/priority_structure.cpp
-        src/test.cpp src/include/exception.h src/hash_map.cpp src/include/hash_map.h)
+        src/include/exception.h
+        src/hash_map.cpp
+        src/include/hash_map.h
+        test/linear_structure_test.cpp
+        test/include/linear_structure_test.h
+        test/testmain.cpp test/others_test.cpp test/include/others_test.h)

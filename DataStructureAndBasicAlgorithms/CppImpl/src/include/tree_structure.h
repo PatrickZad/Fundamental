@@ -23,7 +23,7 @@ namespace patrick{
     template <class K, class T>
     class BinaryNode{
     public:
-        BinaryNode(K key,T& data,BinaryNode<K,T>* left = nullptr,
+        BinaryNode(K& key,T& data,BinaryNode<K,T>* left = nullptr,
                 BinaryNode<K,T>* right = nullptr);
         K key;
         T data;
@@ -37,7 +37,7 @@ namespace patrick{
     template <class K, class T>
     class DLBinaryNode: public BinaryNode<K,T>{
     public:
-        DLBinaryNode(K key, T& data,
+        DLBinaryNode(K& key, T& data,
                      DLBinaryNode<K,T>* parent= nullptr,
                      DLBinaryNode<K,T>* left = nullptr,
                      DLBinaryNode<K,T>* right = nullptr);
@@ -51,6 +51,7 @@ namespace patrick{
     public:
         int rank=-1;
     };
+
     /*
      * Binary tree and its derived classes
      * */
@@ -62,7 +63,7 @@ namespace patrick{
         virtual ~BinaryTree();
         BinaryTree(const BinaryTree& tree);
         BinaryTree(BinaryTree&& tree);
-        BinaryTree& operator=(const BinaryTree& tree);
+        virtual BinaryTree& operator=(const BinaryTree& tree)=0;
         BinaryTree& operator=(BinaryTree&& tree);
         unsigned int size();
         virtual void set(K key, T* data)=0;
@@ -70,8 +71,8 @@ namespace patrick{
         virtual void insert(K key, T& data)=0;
         virtual T remove(K key)=0;
         void threaded(char order);
-        BinaryNode<K, T>* getRoot();
-    private:
+        virtual BinaryNode<K, T>* getRoot();
+    protected:
         void releaseTree(BinaryNode<K,T>*& root);
         void copyTree(BinaryNode<K,T>*& objectRoot, BinaryNode<K,T>*& sourceRoot);
         BinaryNode<K, T>* root;
@@ -84,7 +85,8 @@ namespace patrick{
         BinarySearchTree();
         ~BinarySearchTree();
         BinarySearchTree(const BinarySearchTree& tree);
-        BinarySearchTree(BinarySearchTree&& tree);
+        using BinaryTree<K,T>::BinaryTree;
+        BinarySearchTree& operator=(const BinarySearchTree& tree);
         void set(K key, T& data);
         T& get(K key);
         void insert(K key, T& data);
@@ -93,6 +95,7 @@ namespace patrick{
     template < class K, class T>
     class BalancedBinarySearchTree : public BinarySearchTree<K, T>{
     public:
+        BalancedBinarySearchTree();
         ~BalancedBinarySearchTree();
     private:
         void restructure(RankedDLBinaryNode<K,T>* node);

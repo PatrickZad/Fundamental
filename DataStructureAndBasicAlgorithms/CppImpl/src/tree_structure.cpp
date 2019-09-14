@@ -9,7 +9,7 @@ using namespace patrick;
  * Binary node methods implementations
  * */
 template <class K, class T>
-BinaryNode<K,T>::BinaryNode(K key, T& data,BinaryNode<K,T>* left, BinaryNode<K,T>* right) {
+BinaryNode<K,T>::BinaryNode(K& key, T& data,BinaryNode<K,T>* left, BinaryNode<K,T>* right) {
     this->key=key;
     this->data=data;
     this->left=left;
@@ -17,8 +17,8 @@ BinaryNode<K,T>::BinaryNode(K key, T& data,BinaryNode<K,T>* left, BinaryNode<K,T
 }
 
 template <class K, class T>
-DLBinaryNode<K,T>::DLBinaryNode(K key, T& data, BinaryNode<K,T>* parent,
-                                BinaryNode<K,T>* left, BinaryNode<K,T>* right){
+DLBinaryNode<K,T>::DLBinaryNode(K& key, T& data, DLBinaryNode<K,T>* parent,
+                                DLBinaryNode<K,T>* left, DLBinaryNode<K,T>* right){
     this->key=key;
     this->data=data;
     this->left=left;
@@ -42,12 +42,12 @@ BinaryTree<K,T>::~BinaryTree() {
     this->length=0;
 }
 
-
+/*
 template < class K, class T>
 BinaryTree<K,T>::BinaryTree(const BinaryTree& tree) {
     copyTree(this->root,tree.root);
     this->length=tree.length;
-}
+}*/
 
 template < class K, class T>
 BinaryTree<K,T>::BinaryTree(BinaryTree&& tree){
