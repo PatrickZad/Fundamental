@@ -26,6 +26,19 @@ DLBinaryNode<K,T>::DLBinaryNode(K& key, T& data, DLBinaryNode<K,T>* parent,
     this->parent=parent;
 }
 
+
+template <class K, class T>
+RankedDLBinaryNode<K,T>::RankedDLBinaryNode(K &key, T &data, int rank,
+                                            RankedDLBinaryNode<K, T> *parent,
+                                            RankedDLBinaryNode<K, T> *left,
+                                            RankedDLBinaryNode<K, T> *right) {
+    this->key=key;
+    this->data=data;
+    this->rank=rank;
+    this->parent=parent;
+    this->left=left;
+    this->right=right;
+}
 /*
  * Binary tree methods implementation
  * */
@@ -42,12 +55,12 @@ BinaryTree<K,T>::~BinaryTree() {
     this->length=0;
 }
 
-/*
+
 template < class K, class T>
 BinaryTree<K,T>::BinaryTree(const BinaryTree& tree) {
-    copyTree(this->root,tree.root);
+    this->root=copyTree(tree.root);
     this->length=tree.length;
-}*/
+}
 
 template < class K, class T>
 BinaryTree<K,T>::BinaryTree(BinaryTree&& tree){
@@ -60,8 +73,7 @@ BinaryTree<K,T>::BinaryTree(BinaryTree&& tree){
 template < class K, class T>
 BinaryTree<K,T>& BinaryTree<K,T>::operator=(const BinaryTree& tree){
     releaseTree(this->root);
-    this->root= nullptr;
-    copyTree(this->root,tree.root);
+    this->root= copyTree(tree.root);
     this->length=tree.length;
 }
 
@@ -72,52 +84,6 @@ BinaryTree<K,T>& BinaryTree<K,T>::operator=(BinaryTree&& tree){
     this->length=tree.length;
     tree.root=nullptr;
     tree.length=0;
-}
-
-template < class K, class T>
-void  BinaryTree<K,T>::copyTree(BinaryNode<K,T>*& objectRoot, BinaryNode<K,T>*& sourceRoot) {
-    BinaryNode<K,T>* sourcePtr=sourcePtr;
-    objectRoot=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
-    ArrayStack<BinaryNode<K,T>> sourceStack=ArrayStack<BinaryNode<K,T>*>{};
-    ArrayStack<BinaryNode<K,T>> objectStack=ArrayStack<BinaryNode<K,T>*>{};
-    sourceStack.push(sourcePtr);
-    objectStack.push(this->root);
-    sourcePtr=sourcePtr->left;
-    int flag=1;//1 means left, 0 means right
-    while (sourcePtr!= nullptr || sourceStack.size()>0){
-        if(sourcePtr!= nullptr){
-            BinaryNode<K,T>* obj=objectStack.pop();
-            if (flag){
-                obj->left=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
-                objectStack.push(obj);
-                objectStack.push(obj->left);
-            } else{
-                obj->right=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
-                objectStack.push(obj);
-                objectStack.push(obj->right);
-            }
-            sourceStack.push(*sourcePtr);
-            sourcePtr=sourcePtr->left;
-            flag=1;
-        } else{
-            sourcePtr=sourceStack.pop()->right;
-            objectStack.pop();
-            flag=0;
-        }
-    }
-}
-
-template < class K, class T>
-void  BinaryTree<K,T>::releaseTree(BinaryNode<K,T>*& root) {
-    class ReleaseTreeFunc {
-    public:
-        void operator()(BinaryNode<K,T>* node){
-            delete node;
-        }
-    };
-    ReleaseTreeFunc func=ReleaseTreeFunc{};
-    postOrderTraversal(root,func);
-    root=nullptr;
 }
 
 template < class K, class T>
@@ -163,11 +129,6 @@ void BinaryTree<K,T>::threaded(char order) {
 /*
  * Binary search tree methods implementation
  * */
-template <class K, class T>
-BinarySearchTree<K,T>::BinarySearchTree(){
-    this->length=0;
-    this->root=nullptr;
-}
 
 template <class K, class T>
 BinarySearchTree<K,T>::~BinarySearchTree(){
@@ -312,12 +273,30 @@ T BinarySearchTree<K,T>::remove(K key) {
 /*
  * Balanced binary search tree methods implementation
  * */
+template < class K, class T>
+BalancedBinarySearchTree<K,T>::~BalancedBinarySearchTree() {
+    this->releaseTree(this->root);
+    this->length=0;
+}
 
 template < class K, class T>
-void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
-    //TODO dynamic_cast
-    RankedDLBinaryNode<K,T>* parent=node->parent;
-    RankedDLBinaryNode<K,T>* grandParent=parent->parent;
+BalancedBinarySearchTree<K,T>::BalancedBinarySearchTree(const BalancedBinarySearchTree& tree){
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+}
+
+template <class K, class T>
+BalancedBinarySearchTree<K,T>& BalancedBinarySearchTree<K,T>::operator=(
+        const BalancedBinarySearchTree<K, T> &tree) {
+    releaseTree(this->root);
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+}
+
+template < class K, class T>
+void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
+    DLBinaryNode<K,T>* parent=node->parent;
+    DLBinaryNode<K,T>* grandParent=parent->parent;
     if(grandParent->right==parent){
         if (node==parent->right){
             parent->parent==grandParent->parent;
@@ -329,7 +308,7 @@ void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
                 }
             }
             if (parent->left!= nullptr){
-                DLBinaryNode<K,T>* parentLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(parent->left);
+                DLBinaryNode<K,T>* parentLeftChild= parent->left;
                 parentLeftChild->parent=grandParent;
             }
             grandParent->right=parent->left;
@@ -343,12 +322,12 @@ void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
             }
             grandParent->right=node->left;
             if (node->left!= nullptr){
-                DLBinaryNode<K,T>* nodeLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(node->left);
+                DLBinaryNode<K,T>* nodeLeftChild= node->left;
                 nodeLeftChild->parent=grandParent;
             }
             parent->left=node->right;
             if (node->right!= nullptr){
-                DLBinaryNode<K,T>* nodeRightChild= dynamic_cast<DLBinaryNode<K,T>*>(node->right);
+                DLBinaryNode<K,T>* nodeRightChild= node->right;
                 nodeRightChild->parent=grandParent;
             }
             grandParent->parent=node;
@@ -367,7 +346,7 @@ void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
                 }
             }
             if(parent->right!= nullptr){
-                DLBinaryNode<K,T>* parentRightChild= dynamic_cast<DLBinaryNode<K,T>*>(parent->right);
+                DLBinaryNode<K,T>* parentRightChild= parent->right;
                 parentRightChild->parent=grandParent;
             }
             grandParent->left=parent->right;
@@ -381,12 +360,12 @@ void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
             }
             grandParent->left=node->right;
             if (node->right!= nullptr){
-                DLBinaryNode<K,T>* nodeRightChild= dynamic_cast<DLBinaryNode<K,T>*>(node->right);
+                DLBinaryNode<K,T>* nodeRightChild= node->right;
                 nodeRightChild->parent=grandParent;
             }
             parent->right=node->left;
             if (node->left!= nullptr){
-                DLBinaryNode<K,T>* nodeLeftChild= dynamic_cast<DLBinaryNode<K,T>*>(node->left);
+                DLBinaryNode<K,T>* nodeLeftChild= node->left;
                 nodeLeftChild->parent=grandParent;
             }
             grandParent->parent=node;
@@ -401,6 +380,34 @@ void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
  * AVL tree methods implementation
  * */
 template < class K, class T>
+AVLTree<K,T>::~AVLTree(){
+    releaseTree(this->root);
+    this->length=0;
+}
+
+template < class K, class T>
+AVLTree<K,T>::AVLTree(const AVLTree& tree){
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+}
+
+template < class K, class T>
+AVLTree<K,T>::AVLTree(AVLTree&& tree){
+    this->root=tree.root;
+    tree.root= nullptr;
+    this->length=tree.length;
+    tree.length=0;
+}
+
+template < class K, class T>
+AVLTree<K,T>& AVLTree<K,T>::operator=(const AVLTree& tree){
+    releaseTree(this->root);
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+    return *this;
+}
+
+template < class K, class T>
 void AVLTree<K,T>::insert(K key, T& data) {
     //TODO
 }
@@ -411,6 +418,34 @@ T AVLTree<K,T>::remove(K key) {
 /*
  * RedBlack tree methods implementation
  * */
+template < class K, class T>
+RedBlackTree<K,T>::~RedBlackTree(){
+    releaseTree(this->root);
+    this->length=0;
+}
+
+template < class K, class T>
+RedBlackTree<K,T>::RedBlackTree(const RedBlackTree& tree){
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+}
+
+template < class K, class T>
+RedBlackTree<K,T>::RedBlackTree(RedBlackTree&& tree){
+    this->root=tree.root;
+    tree.root= nullptr;
+    this->length=tree.length;
+    tree.length=0;
+}
+
+template < class K, class T>
+RedBlackTree<K,T>& RedBlackTree<K,T>::operator=(const RedBlackTree& tree){
+    releaseTree(this->root);
+    this->root=copyTree(tree.root);
+    this->length=tree.length;
+    return *this;
+}
+
 template < class K, class T>
 void RedBlackTree<K,T>::insert(K key, T& data) {
     //TODO
@@ -535,4 +570,118 @@ void layerTraversal(BinaryTree<K,T>& tree, F& visitFunc){
     }
 }
 
+/*
+     * other assistant functions
+     * */
+template <class K, class T>
+BinaryNode<K,T>* copyTree(BinaryNode<K,T>* root){
+    BinaryNode<K,T>* sourcePtr=root;
+    BinaryNode<K,T>* objectRoot=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+    ArrayStack<BinaryNode<K,T>*> sourceStack=ArrayStack<BinaryNode<K,T>*>{};
+    ArrayStack<BinaryNode<K,T>*> objectStack=ArrayStack<BinaryNode<K,T>*>{};
+    sourceStack.push(sourcePtr);
+    objectStack.push(objectRoot);
+    sourcePtr=sourcePtr->left;
+    int flag=1;//1 means left, 0 means right
+    while (sourcePtr!= nullptr || sourceStack.size()>0){
+        if(sourcePtr!= nullptr){
+            BinaryNode<K,T>* obj=objectStack.pop();
+            if (flag){
+                obj->left=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+                objectStack.push(obj);
+                objectStack.push(obj->left);
+            } else{
+                obj->right=new BinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+                objectStack.push(obj);
+                objectStack.push(obj->right);
+            }
+            sourceStack.push(*sourcePtr);
+            sourcePtr=sourcePtr->left;
+            flag=1;
+        } else{
+            sourcePtr=sourceStack.pop()->right;
+            objectStack.pop();
+            flag=0;
+        }
+    }
+    return objectRoot;
+}
+template <class K, class T>
+DLBinaryNode<K,T>* copyTree(DLBinaryNode<K,T>* root){
+    DLBinaryNode<K,T>* sourcePtr=root;
+    DLBinaryNode<K,T>* objectRoot=new DLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data};
+    ArrayStack<DLBinaryNode<K,T>*> sourceStack=ArrayStack<DLBinaryNode<K,T>*>{};
+    ArrayStack<DLBinaryNode<K,T>*> objectStack=ArrayStack<DLBinaryNode<K,T>*>{};
+    sourceStack.push(sourcePtr);
+    objectStack.push(objectRoot);
+    sourcePtr=sourcePtr->left;
+    int flag=1;//1 means left, 0 means right
+    while (sourcePtr!= nullptr || sourceStack.size()>0){
+        if(sourcePtr!= nullptr){
+            DLBinaryNode<K,T>* obj=objectStack.pop();
+            if (flag){
+                obj->left=new DLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data,obj};
+                objectStack.push(obj);
+                objectStack.push(obj->left);
+            } else{
+                obj->right=new DLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data,obj};
+                objectStack.push(obj);
+                objectStack.push(obj->right);
+            }
+            sourceStack.push(*sourcePtr);
+            sourcePtr=sourcePtr->left;
+            flag=1;
+        } else{
+            sourcePtr=sourceStack.pop()->right;
+            objectStack.pop();
+            flag=0;
+        }
+    }
+    return objectRoot;
+}
+template <class K, class T>
+RankedDLBinaryNode<K,T>* copyTree(RankedDLBinaryNode<K,T>* root){
+    RankedDLBinaryNode<K,T>* sourcePtr=root;
+    RankedDLBinaryNode<K,T>* objectRoot=new RankedDLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data,sourcePtr->rank};
+    ArrayStack<RankedDLBinaryNode<K,T>*> sourceStack=ArrayStack<RankedDLBinaryNode<K,T>*>{};
+    ArrayStack<RankedDLBinaryNode<K,T>*> objectStack=ArrayStack<RankedDLBinaryNode<K,T>*>{};
+    sourceStack.push(sourcePtr);
+    objectStack.push(objectRoot);
+    sourcePtr=sourcePtr->left;
+    int flag=1;//1 means left, 0 means right
+    while (sourcePtr!= nullptr || sourceStack.size()>0){
+        if(sourcePtr!= nullptr){
+            RankedDLBinaryNode<K,T>* obj=objectStack.pop();
+            if (flag){
+                obj->left=new RankedDLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data,sourcePtr->rank,obj};
+                objectStack.push(obj);
+                objectStack.push(obj->left);
+            } else{
+                obj->right=new RankedDLBinaryNode<K,T>{sourcePtr->key,sourcePtr->data,sourcePtr->rank,obj};
+                objectStack.push(obj);
+                objectStack.push(obj->right);
+            }
+            sourceStack.push(*sourcePtr);
+            sourcePtr=sourcePtr->left;
+            flag=1;
+        } else{
+            sourcePtr=sourceStack.pop()->right;
+            objectStack.pop();
+            flag=0;
+        }
+    }
+    return objectRoot;
+}
+
+template <class K, class T>
+void releaseTree(BinaryNode<K,T>* root){
+    class ReleaseTreeFunc {
+    public:
+        void operator()(BinaryNode<K,T>* node){
+            delete node;
+        }
+    };
+    ReleaseTreeFunc func=ReleaseTreeFunc{};
+    postOrderTraversal(root,func);
+}
 

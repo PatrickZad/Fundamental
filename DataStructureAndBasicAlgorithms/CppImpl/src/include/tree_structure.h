@@ -49,6 +49,10 @@ namespace patrick{
     template <class K, class T>
     class RankedDLBinaryNode: public DLBinaryNode<K,T>{
     public:
+        RankedDLBinaryNode(K& key, T& data,int rank=-1,
+                     RankedDLBinaryNode<K,T>* parent= nullptr,
+                     RankedDLBinaryNode<K,T>* left = nullptr,
+                     RankedDLBinaryNode<K,T>* right = nullptr);
         int rank=-1;
     };
 
@@ -58,62 +62,123 @@ namespace patrick{
 
     template <class K, class T>
     class BinaryTree{
+        /*
+         * Use BinaryNode as element type
+         * */
     public:
         BinaryTree();
+
         virtual ~BinaryTree();
+
         BinaryTree(const BinaryTree& tree);
+
         BinaryTree(BinaryTree&& tree);
-        virtual BinaryTree& operator=(const BinaryTree& tree)=0;
+
+        BinaryTree& operator=(const BinaryTree& tree);
+        /*
+         * universal for all derived classes
+         * */
         BinaryTree& operator=(BinaryTree&& tree);
+        /*
+         * universal for all derived classes
+         * */
         unsigned int size();
+
         virtual void set(K key, T* data)=0;
+
         virtual T& get(K key)=0;
+
         virtual void insert(K key, T& data)=0;
+
         virtual T remove(K key)=0;
+        /*
+         * universal for all derived classes
+         * */
         void threaded(char order);
+
         virtual BinaryNode<K, T>* getRoot();
     protected:
-        void releaseTree(BinaryNode<K,T>*& root);
-        void copyTree(BinaryNode<K,T>*& objectRoot, BinaryNode<K,T>*& sourceRoot);
+
         BinaryNode<K, T>* root;
+
         unsigned int length;
     };
 
     template < class K, class T>
     class BinarySearchTree: public BinaryTree<K, T>{
+        /*
+         *use BinaryNode as element type
+         */
     public:
-        BinarySearchTree();
+
         ~BinarySearchTree();
+
         BinarySearchTree(const BinarySearchTree& tree);
-        using BinaryTree<K,T>::BinaryTree;
+
+        BinarySearchTree(BinarySearchTree&& tree);
+
         BinarySearchTree& operator=(const BinarySearchTree& tree);
+
+        /*
+         * universal for its derived class
+         * */
         void set(K key, T& data);
+        /*
+         * universal for its derived class
+         * */
         T& get(K key);
+
         void insert(K key, T& data);
+
         T remove(K key);
     };
+
     template < class K, class T>
     class BalancedBinarySearchTree : public BinarySearchTree<K, T>{
+        /*
+         *use DLBinaryNode as element type
+         */
     public:
-        BalancedBinarySearchTree();
         ~BalancedBinarySearchTree();
+
+        BalancedBinarySearchTree(const BalancedBinarySearchTree& tree);
+
+        BalancedBinarySearchTree(BalancedBinarySearchTree&& tree);
+
+        BalancedBinarySearchTree& operator=(const BalancedBinarySearchTree& tree);
+
     private:
-        void restructure(RankedDLBinaryNode<K,T>* node);
-        virtual int rankOfNode(RankedDLBinaryNode<K,T>* node)=0;
+        void restructure(DLBinaryNode<K,T>* node);
+        virtual int rankOfNode(DLBinaryNode<K,T>* node)=0;
     };
+
     template < class K, class T >
     class AVLTree : public BalancedBinarySearchTree<K,T>{
+        /*
+         *use RankedDLBinaryNode as element type
+         */
     public:
         ~AVLTree();
+        AVLTree(const AVLTree& tree);
+        AVLTree(AVLTree&& tree);
+        AVLTree& operator=(const AVLTree& tree);
         void insert(K key, T& data);
         T remove(K key);
 
     private:
         int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
+
     template <class K, class T>
     class RedBlackTree : public BalancedBinarySearchTree<K,T>{
+        /*
+         *use RankedDLBinaryNode as element type
+         */
     public:
+        ~RedBlackTree();
+        RedBlackTree(const RedBlackTree& tree);
+        RedBlackTree(RedBlackTree&& tree);
+        RedBlackTree& operator=(const RedBlackTree& tree);
         void insert(K key, T& data);
         T remove(K key);
 
@@ -145,6 +210,18 @@ namespace patrick{
     template < class K, class T, class F>
     void layerTraversal(BinaryTree<K, T>& tree, F& visitFunc);
 
+    /*
+     * other assistant functions
+     * */
+    template <class K, class T>
+    BinaryNode<K,T>* copyTree(BinaryNode<K,T>* root);
+    template <class K, class T>
+    DLBinaryNode<K,T>* copyTree(DLBinaryNode<K,T>* root);
+    template <class K, class T>
+    RankedDLBinaryNode<K,T>* copyTree(RankedDLBinaryNode<K,T>* root);
+
+    template <class K, class T>
+    void releaseTree(BinaryNode<K,T>* root);
 
 }
 #endif //CPPIMPL_TREE_STRUCTURE_H
