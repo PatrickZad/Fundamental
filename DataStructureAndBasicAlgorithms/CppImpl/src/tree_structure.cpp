@@ -151,7 +151,7 @@ BinarySearchTree<K,T>::BinarySearchTree(BinarySearchTree&& tree){
 }
 
 template < class K, class T>
-void BinarySearchTree<K,T>::set(K key, T& data) {
+void BinarySearchTree<K,T>::set(K& key, T& data) {
     BinaryNode<K,T>* node=this->getRoot();
     while (node!= nullptr){
         if(*key==node->key){
@@ -168,7 +168,7 @@ void BinarySearchTree<K,T>::set(K key, T& data) {
 }
 
 template < class K, class T>
-T& BinarySearchTree<K,T>::get(K key) {
+T& BinarySearchTree<K,T>::get(K& key) {
     BinaryNode<K,T>* node=this->getRoot();
     while (node!= nullptr){
         if(*key==node->key){
@@ -183,7 +183,7 @@ T& BinarySearchTree<K,T>::get(K key) {
     throw NoSuchKeyExists{};
 }
 template < class K, class T>
-void BinarySearchTree<K,T>::insert(K key, T& data) {
+void BinarySearchTree<K,T>::insert(K& key, T& data) {
     BinaryNode<K,T>* node=new BinaryNode<K,T>{key,data};
     if(this->length==0){
         this->root=node;
@@ -213,7 +213,7 @@ void BinarySearchTree<K,T>::insert(K key, T& data) {
     }
 }
 template < class K, class T>
-T BinarySearchTree<K,T>::remove(K key) {
+T BinarySearchTree<K,T>::remove(K& key) {
     BinaryNode<K,T>* node=this->root;
     BinaryNode<K,T>* parent=this->root;
     while (node!= nullptr){
@@ -294,9 +294,9 @@ BalancedBinarySearchTree<K,T>& BalancedBinarySearchTree<K,T>::operator=(
 }
 
 template < class K, class T>
-void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
-    DLBinaryNode<K,T>* parent=node->parent;
-    DLBinaryNode<K,T>* grandParent=parent->parent;
+void BalancedBinarySearchTree<K,T>::restructure(RankedDLBinaryNode<K,T>* node) {
+    RankedDLBinaryNode<K,T>* parent=node->parent;
+    RankedDLBinaryNode<K,T>* grandParent=parent->parent;
     if(grandParent->right==parent){
         if (node==parent->right){
             parent->parent==grandParent->parent;
@@ -308,11 +308,14 @@ void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
                 }
             }
             if (parent->left!= nullptr){
-                DLBinaryNode<K,T>* parentLeftChild= parent->left;
+                RankedDLBinaryNode<K,T>* parentLeftChild= parent->left;
                 parentLeftChild->parent=grandParent;
             }
             grandParent->right=parent->left;
             parent->left=grandParent;
+            node->rank=rankOfNode(node);
+            parent->rank=rankOfNode(parent);
+            grandParent->rank=rankOfNode(grandParent);
         } else{
             node->parent=grandParent->parent;
             if (grandParent->parent->left==grandParent){
@@ -322,18 +325,22 @@ void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
             }
             grandParent->right=node->left;
             if (node->left!= nullptr){
-                DLBinaryNode<K,T>* nodeLeftChild= node->left;
+                RankedDLBinaryNode<K,T>* nodeLeftChild= node->left;
                 nodeLeftChild->parent=grandParent;
             }
             parent->left=node->right;
             if (node->right!= nullptr){
-                DLBinaryNode<K,T>* nodeRightChild= node->right;
+                RankedDLBinaryNode<K,T>* nodeRightChild= node->right;
                 nodeRightChild->parent=grandParent;
             }
             grandParent->parent=node;
             node->left=grandParent;
             parent->parent=node;
             node->right=parent;
+
+            parent->rank=rankOfNode(parent);
+            grandParent->rank=rankOfNode(grandParent);
+            node->rank=rankOfNode(node);
         }
     } else{
         if (node==parent->left){
@@ -346,11 +353,15 @@ void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
                 }
             }
             if(parent->right!= nullptr){
-                DLBinaryNode<K,T>* parentRightChild= parent->right;
+                RankedDLBinaryNode<K,T>* parentRightChild= parent->right;
                 parentRightChild->parent=grandParent;
             }
             grandParent->left=parent->right;
             parent->right=grandParent;
+
+            node->rank=rankOfNode(node);
+            parent->rank=rankOfNode(parent);
+            grandParent->rank=rankOfNode(grandParent);
         } else{
             node->parent=grandParent->parent;
             if (grandParent->parent->left==grandParent){
@@ -360,18 +371,22 @@ void BalancedBinarySearchTree<K,T>::restructure(DLBinaryNode<K,T>* node) {
             }
             grandParent->left=node->right;
             if (node->right!= nullptr){
-                DLBinaryNode<K,T>* nodeRightChild= node->right;
+                RankedDLBinaryNode<K,T>* nodeRightChild= node->right;
                 nodeRightChild->parent=grandParent;
             }
             parent->right=node->left;
             if (node->left!= nullptr){
-                DLBinaryNode<K,T>* nodeLeftChild= node->left;
+                RankedDLBinaryNode<K,T>* nodeLeftChild= node->left;
                 nodeLeftChild->parent=grandParent;
             }
             grandParent->parent=node;
             node->right=grandParent;
             parent->parent=node;
             node->left=parent;
+
+            parent->rank=rankOfNode(parent);
+            grandParent->rank=rankOfNode(grandParent);
+            node->rank=rankOfNode(node);
         }
     }
 }
@@ -408,12 +423,83 @@ AVLTree<K,T>& AVLTree<K,T>::operator=(const AVLTree& tree){
 }
 
 template < class K, class T>
-void AVLTree<K,T>::insert(K key, T& data) {
-    //TODO
+void AVLTree<K,T>::insert(K& key, T& data) {
+    RankedDLBinaryNode<K,T>* node=new RankedDLBinaryNode<K,T>{key,data,1};
+    if(this->length==0){
+        this->root=node;
+        this->length=1;
+        return;
+    }
+    //insert node
+    RankedDLBinaryNode<K,T>* parent=this->root;
+    while (parent!= nullptr){
+        if(key==parent->key){
+            throw KeyAlreadyExists{};
+        }
+        if(key<parent->key){
+            if(parent->left == nullptr){
+                parent->left=node;
+                node->parent=parent;
+                this->length++;
+            } else{
+                parent=parent->left;
+            }
+        } else{
+            if (parent->right== nullptr){
+                parent->right=node;
+                node->parent=parent;
+                this->length++;
+            } else{
+                parent=parent->right;
+            }
+        }
+    }
+    //update rank
+    parent=node->parent;
+    while (parent!= nullptr){
+        if (parent->rank!=rankOfNode(parent)){
+            parent->rank=rankOfNode(parent);
+            parent=parent->parent;
+        } else{
+            break;
+        }
+    }
+    //restructure if necessary
+    parent=node->parent->parent;
+    RankedDLBinaryNode<K,T>* baseNode=node;
+    while (parent!= nullptr){
+        int lefetRank= dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->left)->rank;
+        int rightRank= dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->right)->rank;
+        if (lefetRank-rightRank>1 || lefetRank-rightRank<-1){
+            restructure(baseNode);
+        } else{
+            parent=parent->parent;
+            baseNode=node->parent;
+        }
+    }
 }
 template < class K, class T>
-T AVLTree<K,T>::remove(K key) {
+T AVLTree<K,T>::remove(K& key) {
     //TODO
+}
+
+template < class K, class T>
+int AVLTree<K,T>::rankOfNode(RankedDLBinaryNode<K, T> *node) {
+    if (node->left== nullptr){
+        if (node->right== nullptr){
+            return 1;
+        } else{
+            return dynamic_cast<RankedDLBinaryNode<K,T>*>(node->right)->rank+1;
+        }
+    } else{
+        if (node->right== nullptr){
+            return dynamic_cast<RankedDLBinaryNode<K,T>*>(node->left)->rank+1;
+        } else{
+            int leftRank=dynamic_cast<RankedDLBinaryNode<K,T>*>(node->left)->rank;
+            int rightRank=dynamic_cast<RankedDLBinaryNode<K,T>*>(node->right)->rank;
+            return leftRank>rightRank ? leftRank+1:rightRank+1;
+        }
+    }
 }
 /*
  * RedBlack tree methods implementation
@@ -447,11 +533,11 @@ RedBlackTree<K,T>& RedBlackTree<K,T>::operator=(const RedBlackTree& tree){
 }
 
 template < class K, class T>
-void RedBlackTree<K,T>::insert(K key, T& data) {
+void RedBlackTree<K,T>::insert(K& key, T& data) {
     //TODO
 }
 template < class K, class T>
-T RedBlackTree<K,T>::remove(K key) {
+T RedBlackTree<K,T>::remove(K& key) {
     //TODO
 }
 

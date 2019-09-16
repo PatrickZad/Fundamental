@@ -84,13 +84,13 @@ namespace patrick{
          * */
         unsigned int size();
 
-        virtual void set(K key, T* data)=0;
+        virtual void set(K& key, T* data)=0;
 
-        virtual T& get(K key)=0;
+        virtual T& get(K& key)=0;
 
-        virtual void insert(K key, T& data)=0;
+        virtual void insert(K& key, T& data)=0;
 
-        virtual T remove(K key)=0;
+        virtual T remove(K& key)=0;
         /*
          * universal for all derived classes
          * */
@@ -122,21 +122,22 @@ namespace patrick{
         /*
          * universal for its derived class
          * */
-        void set(K key, T& data);
+        void set(K& key, T& data);
         /*
          * universal for its derived class
          * */
-        T& get(K key);
+        T& get(K& key);
 
-        void insert(K key, T& data);
+        void insert(K& key, T& data);
 
-        T remove(K key);
+        T remove(K& key);
+
     };
 
     template < class K, class T>
     class BalancedBinarySearchTree : public BinarySearchTree<K, T>{
         /*
-         *use DLBinaryNode as element type
+         *use RankedDLBinaryNode as element type
          */
     public:
         ~BalancedBinarySearchTree();
@@ -147,9 +148,9 @@ namespace patrick{
 
         BalancedBinarySearchTree& operator=(const BalancedBinarySearchTree& tree);
 
-    private:
-        void restructure(DLBinaryNode<K,T>* node);
-        virtual int rankOfNode(DLBinaryNode<K,T>* node)=0;
+    protected:
+        void restructure(RankedDLBinaryNode<K,T>* node);
+        virtual int rankOfNode(RankedDLBinaryNode<K,T>* node)=0;
     };
 
     template < class K, class T >
@@ -162,10 +163,10 @@ namespace patrick{
         AVLTree(const AVLTree& tree);
         AVLTree(AVLTree&& tree);
         AVLTree& operator=(const AVLTree& tree);
-        void insert(K key, T& data);
-        T remove(K key);
+        void insert(K& key, T& data);
+        T remove(K& key);
 
-    private:
+    protected:
         int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
 
@@ -179,10 +180,10 @@ namespace patrick{
         RedBlackTree(const RedBlackTree& tree);
         RedBlackTree(RedBlackTree&& tree);
         RedBlackTree& operator=(const RedBlackTree& tree);
-        void insert(K key, T& data);
-        T remove(K key);
+        void insert(K& key, T& data);
+        T remove(K& key);
 
-    private:
+    protected:
         int rankOfNode(RankedDLBinaryNode<K,T>* node);
     };
 
