@@ -151,6 +151,7 @@ namespace patrick{
     protected:
         void restructure(RankedDLBinaryNode<K,T>* node);
         virtual int rankOfNode(RankedDLBinaryNode<K,T>* node)=0;
+        void updateRankDownToTop(RankedDLBinaryNode<K,T>* node);
     };
 
     template < class K, class T >

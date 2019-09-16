@@ -455,6 +455,7 @@ void AVLTree<K,T>::insert(K& key, T& data) {
         }
     }
     //update rank
+    //TODO update rank
     parent=node->parent;
     while (parent!= nullptr){
         if (parent->rank!=rankOfNode(parent)){
@@ -472,6 +473,7 @@ void AVLTree<K,T>::insert(K& key, T& data) {
         int rightRank= dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->right)->rank;
         if (lefetRank-rightRank>1 || lefetRank-rightRank<-1){
             restructure(baseNode);
+            break;
         } else{
             parent=parent->parent;
             baseNode=node->parent;
@@ -480,7 +482,80 @@ void AVLTree<K,T>::insert(K& key, T& data) {
 }
 template < class K, class T>
 T AVLTree<K,T>::remove(K& key) {
-    //TODO
+    RankedDLBinaryNode<K,T>* node=this->root;
+    RankedDLBinaryNode<K,T>* parent=this->root;
+    T result;
+    while (node!= nullptr){
+        if (node->key==key){
+            break;
+        }
+        if(node->key>key){
+            parent=node;
+            node=node->left;
+        } else{
+            parent=node;
+            node=node->right;
+        }
+    }
+    if (node!= nullptr){
+        T result = node->data;
+        if (node->left== nullptr){
+            if (parent->left==node){
+                parent->left=node->right;
+            } else{
+                parent->right=node->right;
+            }
+            dynamic_cast<RankedDLBinaryNode<K,T>*>(node->right)->parent=node->parent;
+            delete node;
+        } else{
+            if (node->right== nullptr){
+                if (parent->left==node){
+                    parent->left=node->left;
+                } else{
+                    parent->right=node->left;
+                }
+                dynamic_cast<RankedDLBinaryNode<K,T>*>(node->left)->parent=node->parent;
+                delete node;
+            } else{
+                //find minimum in right subtree and replace
+                //TODO update rank
+                RankedDLBinaryNode<K,T>* m=node->right->left;
+                while (m->left!=nullptr){
+                    m=m->left;
+                }
+                node->key=m->key;
+                node->data=m->data;
+                m->parent->left=m->right;
+                if (m->right!= nullptr){
+                    dynamic_cast<RankedDLBinaryNode<K,T>*>(m->right)->parent=m->parent;
+                }
+                delete m;
+                //restructure if necessary
+                m=node->parent;
+                while (m!= nullptr){
+                    RankedDLBinaryNode<K,T>* zLeft=dynamic_cast<RankedDLBinaryNode<K,T>*>(m->left),
+                        zRight=dynamic_cast<RankedDLBinaryNode<K,T>*>(m->right);
+                    int lefetRank= zLeft->rank;
+                    int rightRank= zRight->rank;
+                    if (lefetRank-rightRank>1 || lefetRank-rightRank<-1){
+                        RankedDLBinaryNode<K,T>* y=lefetRank>rightRank ? zLeft : zRight;
+                        RankedDLBinaryNode<K,T>* yLeft=dynamic_cast<RankedDLBinaryNode<K,T>*>(y->left),
+                            yRight=dynamic_cast<RankedDLBinaryNode<K,T>*>(y->right);
+                        if (yLeft->rank==yRight->rank){
+                            restructure(dynamic_cast<RankedDLBinaryNode<K,T>*>(y==zLeft ? y->left : y->right));
+                        } else{
+                            restructure(yLeft->rank > yRight->rank ? yLeft : yRight);
+                        }
+                    } else{
+                        m=m->parent;
+                    }
+                }
+            }
+        }
+        return result;
+    } else{
+        throw NoSuchKeyExists{};
+    }
 }
 
 template < class K, class T>
