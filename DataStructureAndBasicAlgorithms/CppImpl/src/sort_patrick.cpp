@@ -2,8 +2,9 @@
 // Created by Dawne on 2019/7/10.
 //
 #include "include/sort_patrick.h"
+using namespace patrick;
 template <class C>
-void patrick::insertionSort(C& sequence, int length, bool ascend){
+void insertionSort(C& sequence, int length, bool ascend){
     for(int i=1;i<length;i++){
         for(int j=i-1;j>=0;j--){
             auto temp=sequence[i];
@@ -26,7 +27,7 @@ void patrick::insertionSort(C& sequence, int length, bool ascend){
     }
 }
 template <class C>
-void patrick::selectionSort(C& collection) {
+void selectionSort(C& collection) {
     for (int i = 0; i < collection.size(); ++i) {
         int min=i;
         for (int j = i+1;j<collection.size();j++){
@@ -40,7 +41,7 @@ void patrick::selectionSort(C& collection) {
     }
 }
 template <class C>
-void patrick::bubbleSort(C &collection) {
+void bubbleSort(C &collection) {
     for (int i = collection.size()-1; i > 0 ; i--) {
         for (int j = 0; j <i ; ++j) {
             if (collection[j]>collection[j+1]){
@@ -98,26 +99,26 @@ inline void merge(C& sequence, int start, int end0, int end1, bool ascend){
     }
 }
 template <class C>
-void patrick::mergeSort(C& sequence, int startIndex, int endIndex, bool ascend){
+void mergeSort(C& sequence, int startIndex, int endIndex, bool ascend){
     if (endIndex==startIndex){
         return;
     }
     int medium=(startIndex+endIndex)/2;
-    patrick::mergeSort(sequence,startIndex,medium,ascend);
-    patrick::mergeSort(sequence,medium+1,endIndex,ascend);
+    mergeSort(sequence,startIndex,medium,ascend);
+    mergeSort(sequence,medium+1,endIndex,ascend);
     merge(sequence,startIndex,medium,endIndex,ascend);
 }
 template <class C>
-void patrick::quickSort(C& array,int start,int end) {
+void quickSort(C& array,int start,int end) {
     if (start==end){
         return;
     }
-    int i =0,j=array.size()-1;
+    int i =start,j=end;
     while(i<j){
-        while(array[i]<=array[0]){
+        while(array[i]<=array[start]){
             i++;
         }
-        while (array[j]>array[0]){
+        while (array[j]>array[end]){
             j--;
         }
         auto temp=array[i];
@@ -127,8 +128,67 @@ void patrick::quickSort(C& array,int start,int end) {
         j--;
     }
     auto temp=array[j];
-    array[j]=array[0];
-    array[0]=temp;
-    patrick::quickSort(array,start,j-1);
-    patrick::quickSort(array,i,end);
+    array[j]=array[start];
+    array[start]=temp;
+    quickSort(array,start,j-1);
+    quickSort(array,i,end);
+}
+
+template <class C>
+void randQuickSort(C& array, int start, int end){
+    if (start==end){
+        return;
+    }
+    int base=rand()%(end-start+1);
+    auto t=array[base];
+    array[base]=array[start];
+    array[start]=t;
+    int i =start,j=end;
+    while(i<j){
+        while(array[i]<=array[start]){
+            i++;
+        }
+        while (array[j]>array[end]){
+            j--;
+        }
+        auto temp=array[i];
+        array[i]=array[j];
+        array[j]=array[i];
+        i++;
+        j--;
+    }
+    auto temp=array[j];
+    array[j]=array[start];
+    array[start]=temp;
+    randQuickSort(array,start,j-1);
+    randQquickSort(array,i,end);
+}
+
+template <class C>
+void heapSort(C& collection){
+
+}
+
+
+unsigned int [] countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max){
+    unsigned int* out=new unsigned int[length];
+    unsigned int* temp=new unsigned int[max+1];
+    for (unsigned int i=0;i<max;i++){
+        temp[i]=0;
+    }
+    for (unsigned int i=0;i<length;i++){
+        temp[collection[i]]++;
+    }
+    for (unsigned int i=1;i<max;i++){
+        temp[i]+=temp[i-1];
+    }
+    for (int i=length-1;i>=0;i--){
+        out[temp[collection[i]]-1]=collection[i];
+        temp[collection[i]]--;
+    }
+}
+
+template <class C>
+void hillSort(C& collection){
+
 }

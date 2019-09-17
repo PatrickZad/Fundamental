@@ -27,8 +27,7 @@ namespace patrick{
 
     void heapSort(C& collection);
 
-    template <class C>
-    void countingSort(C& collection);
+    unsigned int[] countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max);
 
     template <class C>
     void hillSort(C& collection);
