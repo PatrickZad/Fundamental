@@ -609,8 +609,139 @@ RedBlackTree<K,T>& RedBlackTree<K,T>::operator=(const RedBlackTree& tree){
 
 template < class K, class T>
 void RedBlackTree<K,T>::insert(K& key, T& data) {
-    //TODO
+    RankedDLBinaryNode<K,T>* node=new RankedDLBinaryNode<K,T>{key,data,NODE_COLOR_RED};
+    if(this->length==0){
+        this->root=node;
+        node->rank=NODE_COLOR_BLACK;
+        return;
+    }
+    RankedDLBinaryNode<K,T>* parent=this->getRoot();
+    while (parent!= nullptr){
+        if(key==parent->key){
+            throw KeyAlreadyExists{};
+        }
+        if(key<parent->key){
+            if(parent->left == nullptr){
+                parent->left=node;
+                node->parent=parent;
+            } else{
+                parent=parent->left;
+            }
+        } else{
+            if (parent->right== nullptr){
+                parent->right=node;
+                node->parent=parent;
+            } else{
+                parent=parent->right;
+            }
+        }
+    }
+    this->length++;
+    fixup(node);
 }
+
+template < class K, class T>
+void RedBlackTree<K,T>::fixup(RankedDLBinaryNode<K, T>* node) {
+    auto parent= dynamic_cast<RankedDLBinaryNode<K,T>*>(node->p);
+    while (parent!= nullptr && parent->rank==NODE_COLOR_RED){
+        if(parent->parent== nullptr){
+            return;
+        }
+        if (parent==parent->parent->left){
+            auto uncle=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent->right);
+            if (uncle->rank==NODE_COLOR_RED){
+                parent->rank=NODE_COLOR_BLACK;
+                uncle->rank=NODE_COLOR_BLACK;
+                auto grand=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent);
+                grand->rank=NODE_COLOR_RED;
+                node=grand;
+                parent=dynamic_cast<RankedDLBinaryNode<K,T>*>(grand->parent);
+            } else{
+                auto grand=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent);
+                if (node==node->parent->right){
+                    node=node->parent;
+                    //left rotation
+                    node->parent=grand;
+                    if (grand!= nullptr){
+                        if (grand->left==node->parent){
+                            grand->left=node;
+                        } else{
+                            grand->right=node;
+                        }
+                    }
+                    node->parent->right=node->left;
+                    if (node->left!= nullptr)
+                        dynamic_cast<RankedDLBinaryNode<K,T>*>(node->left)->parent=node->parent;
+                    node->left=node->parent;
+                    node->parent->parent=node;
+                }
+                parent->rank=NODE_COLOR_BLACK;
+                grand->rank=NODE_COLOR_RED;
+                //right rotation
+                node->parent=grand;
+                if (grand!= nullptr){
+                    if (grand->left==node->parent){
+                        grand->left=node;
+                    } else{
+                        grand->right=node;
+                    }
+                }
+                node->parent->left=node->right;
+                if (node->right!= nullptr)
+                    dynamic_cast<RankedDLBinaryNode<K,T>*>(node->right)->parent=node->parent;
+                node->right=node->parent;
+                node->parent->parent=node;
+            }
+        } else{
+            auto uncle=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent->left);
+            if (uncle->rank==NODE_COLOR_RED){
+                parent->rank=NODE_COLOR_BLACK;
+                uncle->rank=NODE_COLOR_BLACK;
+                auto grand=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent);
+                grand->rank=NODE_COLOR_RED;
+                node=grand;
+                parent=dynamic_cast<RankedDLBinaryNode<K,T>*>(grand->parent);
+            } else{
+                auto grand=dynamic_cast<RankedDLBinaryNode<K,T>*>(parent->parent);
+                if (node==node->parent->right){
+                    node=node->parent;
+                    //right rotation
+                    node->parent=grand;
+                    if (grand!= nullptr){
+                        if (grand->left==node->parent){
+                            grand->left=node;
+                        } else{
+                            grand->right=node;
+                        }
+                    }
+                    node->parent->left=node->right;
+                    if (node->right!= nullptr)
+                        dynamic_cast<RankedDLBinaryNode<K,T>*>(node->right)->parent=node->parent;
+                    node->right=node->parent;
+                    node->parent->parent=node;
+
+                }
+                parent->rank=NODE_COLOR_BLACK;
+                grand->rank=NODE_COLOR_RED;
+                //left rotation
+                node->parent=grand;
+                if (grand!= nullptr){
+                    if (grand->left==node->parent){
+                        grand->left=node;
+                    } else{
+                        grand->right=node;
+                    }
+                }
+                node->parent->right=node->left;
+                if (node->left!= nullptr)
+                    dynamic_cast<RankedDLBinaryNode<K,T>*>(node->left)->parent=node->parent;
+                node->left=node->parent;
+                node->parent->parent=node;
+            }
+        }
+    }
+}
+
 template < class K, class T>
 T RedBlackTree<K,T>::remove(K& key) {
     //TODO

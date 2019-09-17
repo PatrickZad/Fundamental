@@ -183,9 +183,12 @@ namespace patrick{
         RedBlackTree& operator=(const RedBlackTree& tree);
         void insert(K& key, T& data);
         T remove(K& key);
-
+        static const int NODE_COLOR_RED=0;
+        static const int NODE_COLOR_BLACK=1;
     protected:
         int rankOfNode(RankedDLBinaryNode<K,T>* node);
+    private:
+        void fixup(RankedDLBinaryNode<K,T>* node);
     };
 
     /*
