@@ -7,6 +7,21 @@
 
 #include <vector>
 namespace patrick{
+
+    class DigitNumber{
+    private:
+        bool isInteger;
+        unsigned int intDigitLength;
+        unsigned int decDigitLength;
+        int* intDigitArray;
+        int* decimalDigitArray;
+    public:
+        DigitNumber(long integer, unsigned int intLength);
+        DigitNumber(double decimal, unsigned int intLength, unsigned int decLength);
+        int getIntDigit(unsigned int index);
+        int getDecDigit(unsigned int index);
+    };
+
     template <class C>
     void insertionSort(C& sequence, int lengh, bool ascend=true);
 
@@ -27,10 +42,12 @@ namespace patrick{
 
     void heapSort(C& collection);
 
-    unsigned int[] countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max);
+    unsigned int* countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max);
 
     template <class C>
     void hillSort(C& collection);
+
+
 
 }
 #endif //CPPIMPL_SORT_PATRICK_H
