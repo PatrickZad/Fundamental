@@ -1,6 +1,7 @@
 //
 // Created by Dawne on 2019/7/10.
 //
+#include <cstdlib>
 #include "include/sort_patrick.h"
 using namespace patrick;
 template <class C>
@@ -170,7 +171,7 @@ void heapSort(C& collection){
 }
 
 
-unsigned int [] countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max){
+unsigned int * countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max){
     unsigned int* out=new unsigned int[length];
     unsigned int* temp=new unsigned int[max+1];
     for (unsigned int i=0;i<max;i++){
@@ -186,6 +187,12 @@ unsigned int [] countingSort(unsigned int (&collection)[], unsigned int length, 
         out[temp[collection[i]]-1]=collection[i];
         temp[collection[i]]--;
     }
+    return out;
+}
+
+template <class C, class P>
+void countingSort(C& collection, P& param, unsigned int max){
+
 }
 
 template <class C>

@@ -8,7 +8,13 @@
 #include <vector>
 namespace patrick{
 
-    class DigitNumber{
+    template <class P>
+    class CountingSortNum{
+    public:
+        virtual unsigned int getSortValue(P& param)=0;
+    };
+
+    class DigitNumber : public CountingSortNum<int>{
     private:
         bool isInteger;
         unsigned int intDigitLength;
@@ -20,6 +26,7 @@ namespace patrick{
         DigitNumber(double decimal, unsigned int intLength, unsigned int decLength);
         int getIntDigit(unsigned int index);
         int getDecDigit(unsigned int index);
+        unsigned int getSortValue(int& index);
     };
 
     template <class C>
@@ -43,6 +50,8 @@ namespace patrick{
     void heapSort(C& collection);
 
     unsigned int* countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max);
+
+    void radixSort(DigitNumber (&collection)[]);
 
     template <class C>
     void hillSort(C& collection);
