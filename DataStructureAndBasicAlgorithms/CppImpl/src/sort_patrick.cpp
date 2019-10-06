@@ -166,8 +166,37 @@ void randQuickSort(C& array, int start, int end){
 }
 
 template <class C>
-void heapSort(C& collection){
+void maxHeapify(C& collection, int index, int heapLast){
+    int left=index*2+1;
+    int right=(index+1)*2;
+    int max=index;
+    if (left<=heapLast && collection[left]>collection[max])max=left;
+    if (right<=heapLast && collection[right]>collection[max])max=right;
+    if(max!=index){
+        auto temp=collection[index];
+        collection[index]=collection[max];
+        collection[max]=temp;
+        maxHeapify(collection,max);
+    }
+}
 
+template <class C>
+void heapSort(C& collection){
+    int heapLast=collection.size()-1;
+    //build heap
+    int i=collection.size()-1;
+    while (i!=1){
+        maxHeapify(collection,(i-1)/2,heapLast);
+        i--;
+    }
+    //sort
+    while (heapLast>0){
+        auto temp=collection[heapLast];
+        collection[heapLast]=collection[0];
+        collection[0]=temp;
+        heapLast--;
+        maxHeapify(collection,0,heapLast);
+    }
 }
 
 
