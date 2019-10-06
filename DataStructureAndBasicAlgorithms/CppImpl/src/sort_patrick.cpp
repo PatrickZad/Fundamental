@@ -197,5 +197,21 @@ void countingSort(C& collection, P& param, unsigned int max){
 
 template <class C>
 void hillSort(C& collection){
-
+    int length=collection.size();
+    int h=1;
+    while (h<length/3){
+        h=h*3+1;
+    }
+    while (h>=1){
+        for (int i = h; i < length; i++) {
+             int j=i;
+             while (j-h>=0 && collection[j]<collection[j-h]){
+                 auto temp=collection[j];
+                 collection[j]=collection[j-h];
+                 collection[j-h]=temp;
+                 j-=h;
+             }
+        }
+        h/=3;
+    }
 }
