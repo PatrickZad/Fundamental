@@ -12,12 +12,6 @@ namespace patrick{
     template <class T>
     T maxSubArraySumLinear(const std::vector<T>& array,T tZero);
     template <class T>
-    T dqPower(T , int);
-    template <class T>
-    int binarySearch(std::vector<T> array, T value);
-    long FibonacciNumDownTop(long n);
-    long FibonacciNum(long n);
-    template <class T>
     std::vector<std::vector<T>> strassenPower(std::vector<std::vector<T>> square, int power);
 
 }

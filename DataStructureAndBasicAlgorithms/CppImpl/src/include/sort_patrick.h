@@ -51,11 +51,9 @@ namespace patrick{
 
     unsigned int* countingSort(unsigned int (&collection)[], unsigned int length, unsigned int max);
 
-    void radixSort(DigitNumber (&collection)[]);
-
     template <class C>
     void hillSort(C& collection);
-
+void radixSort(DigitNumber (&collection)[]);
 
 
 }
