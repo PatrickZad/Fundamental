@@ -23,7 +23,8 @@ int main(){
     //test::deletearray();
     //TestRref obj=TestRref{};
     //testrr(std::move(obj).v);
-    test::DerivedClass* ptr = new test::DerivedClass{};
-    test::testVirtual(ptr);
+    //test::DerivedClass* ptr = new test::DerivedClass{};
+    //test::testVirtual(ptr);
+    test::MyClass cls{};
     return 0;
 }

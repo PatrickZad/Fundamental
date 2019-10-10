@@ -10,10 +10,12 @@ namespace test{
     void namedTypeTrans();
     class MyClass{
     public:
-        MyClass();
+        int* ptr;
+    public:
+        //MyClass();
 
     private:
-        int& num;
+        //int& num;
     };
     void refAndptr();
     void deletearray();
